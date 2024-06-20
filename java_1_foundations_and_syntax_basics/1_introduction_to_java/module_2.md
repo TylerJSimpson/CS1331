@@ -27,6 +27,15 @@
     10. [substring](#substring)
     11. [Other String Methods](#other-string-methods)
 3. [Input and Output](#input-and-output)
+    1. [Scanner Basics](#scanner-basics)
+    2. [Scanner Errors](#scanner-errors)
+    3. [Multiple Prompts and Tokens](#multiple-prompts-and-tokens)
+    4. [Multiple Tokens per Line](#multiple-tokens-per-line)
+    5. [More on Packages](#more-on-packages)
+    5. [Formatting with printf](#formatting-with-printf)
+    6. [String.format](#stringformat)
+    7. [NumberFormat](#numberformat)
+    8. [DecimalFormat](#decimalformat)
 
 ## Back to Basics
 
@@ -451,7 +460,7 @@ The variable or value to the left of the period is called the **calling object**
 
 `String toLowerCase()`
 
-`String interest = "Long Walks on the Beach";`
+`String interest = "Long Walks on the Beach";` 
 
 `interest.toLowerCase();`
 
@@ -479,18 +488,530 @@ So in this case above `interest` is assigned an alias `str` since an address is 
 
 The return value: "Computer Sciencelong walks on the beach"
 
-
-
 ### replace
 
 `String replace(char oldChar, char newChar)`
+
+example:
+
+`String toLowerCase()`
+
+`String interest = "Computer science, long walks on the beach";` 
+
+`interest.replace(' ', '!');`
+
+output: "Computer!Science,!long!walks!on!the!beach!"
 
 ### substring
 
 `String substring(int beginIndex, int endIndex)`
 
+**Index: an integer that represents the position of a character in a String**
+
+Java is 0 indexed to "Computer Science" has a length of 16 where the last character will have index 15.
+
+example:
+
+`String major = "computer science";`
+
+`major.substring(3,6)`
+
+output: "put"
+
+The position end index is not included but the position start index is included.
+
+Also, the compiler does not check the length of strings so something like this will compile but will have a runtime error:
+
+`major.substring(3,100)`
+
 ### Other String Methods
 
+* indexOf()
+    * Performs a left to right search for a sequence of 1 or more characters within a string. -1 is returned if the string does not exist, otherwise it returns the index of the first occurrence.
+    * There are 4 versions of the method:
+        * public int indexOf(String str)
+        * public int indexOf(int char)
+            * integer of the unicode value to look for (single character sequence)
+        * public int indexOf(String str, int fromIndex)
+        * public int indexOf(int char, int fromIndex)
+* lastIndexOf()
+* toUpperCase()
+* charAt()
+
+example:
+
+```java
+public class IndexOfTest {
+    public static void main(String[] args) {
+        String funnyStr = "Computer!Science,!long!walks!on!the!beach";
+        int a = funnyStr.indexOf(33);
+        int b = funnyStr.indexOf('!'); //chars are converted to Unicode int value
+        int c = funnyStr.indexOf("!");
+        int d = funnyStr.indexOf("!Science");
+        int e = funnyStr.indexOf("!Science,!long");
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(c);
+        System.out.println(d);
+        System.out.println(e);
+    }
+}
+```
+
+**Always remember that strings are immutable.**
+
+There are reasons why strings are immutable.
+
+1. Sensitive data is generally stored as strings such as passwords. Allowing them to be modified would introduce security vulnerabilities.
+2. JVM stores critical values as Strings. If they were not immutable untrustworthy code could cause the JVM to do something malicious at runtime.
+3. Immutable strings provide runtime optimizations that can improve the execution time on operations involving strings.
+4. This enables JVM to use a String Constant Pool to reuse String literals that appear in source code.
 
 ## Input and Output
 
+Previously we have learned how to use static variables in our programs. Now we need to look at how to create programs that can interact with users.
+
+### Scanner Basics
+
+Scanner is a Java class that makes it easy to use basic terminal input processing.
+
+```java
+import java.util.Scanner;
+
+public class FahrenheitToCelsius {
+    public static void main (String[] args) {
+        Scanner intput = new Scanner(System.in); //read keyboard input
+    }
+}
+```
+*Note that we must important Scanner it is not immediately available like other classes we have seen*
+
+The stream that connects computer programs to the data from the keyboard is called the **standard input stream (or standard in)**. 
+
+Content in the stream can be read in chunks for processing which are formally called **tokens**.
+
+To break a sequence of characters into tokens, the Scanner needs a representation of boundaries between tokens. This **delimiter** by default is whitespace in Scanner but it can be changed.
+
+Note that **whitespace** includes:
+* space
+* tab
+* newline (\n)
+
+A full list of Scanner methods can be found [here](https://docs.oracle.com/javase/10/docs/api/java/util/Scanner.html#method.summary).
+
+
+```java
+import java.util.Scanner;
+
+public class FahrenheitToCelsius {
+    public static void main (String[] args) {
+        Scanner intput = new Scanner(System.in);
+        System.out.print("Enter a Fahrenheit value: ");
+        int fahrenheit = input.nextInt();
+        double celsius = (5.0/9) * (fahrenheit - 32  );
+        System.out.println("Celsius: " + celsius);
+    }
+}
+```
+
+The 1st 2 lines create a Scanner object then prompt the user to enter a value:
+```java
+        Scanner intput = new Scanner(System.in);
+        System.out.print("Enter a Fahrenheit value: ");
+```
+*We used `print` as opposed to `println` purposefully to keep the input in line and make it more obvious.*
+
+```bash
+javac FahrenheitToCelsius.java
+java FahrenheitToCelsius
+```
+
+This will prompt us to enter a Fahrenheit value. Note that it will wait indefinitely for an input and it will consider the input as complete once a white space is encounters. **All leading whitespace will be ignored**. Becuase of this, you can type enter, space, tab as many times as you want before typing an int and it will not affect the output.
+
+### Scanner Errors
+
+In the program above since we are using `nextInt()` it is expecting an int. But what if we put a different data type in like a string?
+
+If we input "sunny" it won't be able to convert this value into an int and it will return an error.
+
+Important methods here are the `has` methods in the Scanner docs. These methods return a boolean. For example, `hasNextInt()` returns True if the next token is an int and False otherwise.
+
+### Multiple Prompts and Tokens
+
+We will be using the program below and found in programs/[FahrenheitToCelsiusMTL.java](programs/FahrenheitToCelsiusMTL.java).
+
+```java
+import java.util.Scanner;
+
+public class FahrenheitToCelsiusMTL {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a Fahrenheit value: ");
+        int fahrenheit = input.nextInt();
+        System.out.print("Enter a day of the week: ");
+        String day = input.next();
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.println(day + " Fahrenheit: " + fahrenheit);
+        System.out.println(day + " Celsius: " + celsius);
+    }
+}
+```
+
+This will prompt you twice and take both inputs to the respective variables.
+
+If `nextLine()` was used instead of `next()` for initializing variable day it will stop as soon as it starts because it will pick up the empty string. Also, the 1st `System.out.println` will be printed in line causing overlap.
+
+```java
+import java.util.Scanner;
+
+public class FahrenheitToCelsiusMTLnextLine {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a Fahrenheit value: ");
+        int fahrenheit = input.nextInt();
+        input.nextLine(); //cleans up newline at end of user input
+        System.out.print("Enter a day of the week along with the month day and year: ");
+        String day = input.nextLine();
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.println(day + " Fahrenheit: " + fahrenheit);
+        System.out.println(day + " Celsius: " + celsius);
+    }
+}
+```
+
+In this case we can use the `input.nextLine();` to clean up the newLine at the end of the user input and account for this by adding another `System.out.print`.
+
+### Multiple Tokens per Line
+
+Now that we have seen multiple tokens via multiple prompts lets look at how to do multiple tokens with a single prompt.
+
+```java
+import java.util.Scanner;
+public class FahrenheitToCelsiusMTLSamePrompt {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a Fahrenheit value and the day of the week: ");
+        int fahrenheit = input.nextInt();
+        String day = input.next();
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.println(day + " Fahrenheit: " + fahrenheit);
+        System.out.println(day + " Celsius: " + celsius);
+    }
+}
+```
+
+If you entered `91 Saturday\n` It would assign `91` to fahrenheit, automatically skip the whitespace and assign `Saturday` to day.
+
+Similarly you can use `nextLine()` instead of `next()`
+
+```java
+import java.util.Scanner;
+public class FahrenheitToCelsius {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a Fahrenheit value and the day of the week: ");
+        int fahrenheit = input.nextInt();
+        String day = input.nextLine();
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.println(day + " Fahrenheit: " + fahrenheit);
+        System.out.println(day + " Celsius: " + celsius);
+    }
+}
+```
+In this case the last 2 lines will be indented on the return because the space will not be ignored in front of ` Monday`.
+
+You can clean this up though:
+
+`String day = input.nextLine().trim();`
+
+### More on Packages
+
+A **package** is a logical grouping of Classes based on the functions they provide. Earlier we saw System, String, and others which are all in the package called java.lang. java.lang contains the fundamental functions of Java and thus you do not need to manually import them. Clsses that are not part of this java.lang package must be manually imported such as what we did with Scanner `import java.util.Scanner;`.
+
+`import packageName.memberName;`
+
+The `packageName.memberName` is considered a **fully-qualified name** of a package member.
+
+You can also use an asterisk to import all members of a package:
+
+`import java.util.*`
+
+Be careful with wildcards because you can import 2 different Classes with the same name.
+
+It is important to note that there is no change in runtime regardless of the approach. There may be a slight increase in overhead at compilation if using a wildcard.
+
+### Formatting with printf
+
+`printf` stands for print formatted. 
+
+`System.out.printf(formatString, value(s));`
+
+Unlike `print` and `println`, `printf` accepts multiple parameters. 
+
+`System.out.printf("%s Celsius: %f\n", day, celsius);`
+
+The **%** sign denotes a **format specifier**:
+* %d - Decimal (all integers)
+* %f - Floating point (float, double)
+* %s - String
+
+Template for constructing **format specifiers**:
+`%[flag][width][.precision]type`
+
+While `[flag]`, `[width]`, and `[.precision]` are optional, the `%` sign and `type` are required.
+
+Available `types`:
+* %d - Decimal (all integers)
+* %f - Floating point (float, double)
+* %s - String
+
+*Note that `\n` is used because like `print` there is no automatic newline as in `println`.*
+
+When listing the value(s) in the `printf()` it is important they are in the exact order as the format specifiers.
+
+If you want to actually include a % sign in a `printf()` you must use 2 ie "%%".
+
+`System.out.printf("%s Celsius: %f\n", celsius, day);`
+
+This would result in an error because celsius is an integer but was specified as a string in the format specifier.
+
+Let's take a look at adding `precision`:
+`System.out.printf("%s Celsius: %.1f\n", day, celsius);`
+
+```java
+import java.util.Scanner;
+
+public class FahrenheitToCelsiusPrintf {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a fahrenheit value: ");
+        int fahrenheit = input.nextInt();
+        System.out.print("Enter the day of the week: ");
+        String day = input.next();
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.printf("%s Fahrenheit: %d\n", day, fahrenheit);
+        System.out.printf("%s Celsius: %.1f\n", day, celsius);
+    }
+}
+```
+
+This would result in a single decimal point for celsius in the print statement.
+
+Now let's take a look at the `width`.
+
+In the output since the 1st `System.out.` is longer than the 2nd the numbers of `fahrenheit` and `celsius` will not cleanly line up in the console.
+
+
+```java
+import java.util.Scanner;
+
+public class FahrenheitToCelsiusPrintf {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a fahrenheit value: ");
+        int fahrenheit = input.nextInt();
+        System.out.print("Enter the day of the week: ");
+        String day = input.next();
+        System.out.print("Enter your preferred Celsius label (Celsius, Centigrade, or C): ");
+        String cText = input.next();
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.printf("%s Fahrenheit: %d\n", day, fahrenheit);
+        System.out.printf("%s %10s: %.1f\n", day, cText, celsius);
+    }
+}
+```
+
+Enter a fahrenheit value: 96  
+Enter the day of the week: Thursday  
+Enter your preferred Celsius label (Celsius, Centigrade, or C): Celsius  
+Thursday Fahrenheit: 96  
+Thursday    Celsius: 35.6  
+
+Enter a fahrenheit value: 90  
+Enter the day of the week: Thursday  
+Enter your preferred Celsius label (Celsius, Centigrade, or C): C  
+Thursday Fahrenheit: 90  
+Thursday          C: 32.2  
+
+Likewise you can use a negative sign in the `width`:
+
+```java
+import java.util.Scanner;
+
+public class FahrenheitToCelsiusPrintf {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a fahrenheit value: ");
+        int fahrenheit = input.nextInt();
+        System.out.print("Enter the day of the week: ");
+        String day = input.next();
+        System.out.print("Enter your preferred Celsius label (Celsius, Centigrade, or C): ");
+        String cText = input.next();
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.printf("%s Fahrenheit: %d\n", day, fahrenheit);
+        System.out.printf("%s %-10s: %.1f\n", day, cText, celsius);
+    }
+}
+```
+
+Enter a fahrenheit value: 34  
+Enter the day of the week: Tuesday  
+Enter your preferred Celsius label (Celsius, Centigrade, or C): C  
+Tuesday Fahrenheit: 34  
+Tuesday C         : 1.1  
+
+What if there is a REALLY cold day and we may need commas?
+
+Enter a fahrenheit value: -999999  
+Enter the day of the week: Tuesday  
+Enter your preferred Celsius label (Celsius, Centigrade, or C): C  
+Tuesday Fahrenheit: -999999  
+Tuesday C         : -555572.8  
+
+```java
+import java.util.Scanner;
+
+public class FahrenheitToCelsiusPrintf {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a fahrenheit value: ");
+        int fahrenheit = input.nextInt();
+        System.out.print("Enter the day of the week: ");
+        String day = input.next();
+        System.out.print("Enter your preferred Celsius label (Celsius, Centigrade, or C): ");
+        String cText = input.next();
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.printf("%s Fahrenheit: %d\n", day, fahrenheit);
+        System.out.printf("%s %-10s: %,.1f\n", day, cText, celsius);
+    }
+}
+```
+
+Notice we added a `,` in the `System.out.printf("%s %-10s: %,.1f\n", day, cText, celsius);`.
+
+Enter a fahrenheit value: -9999999  
+Enter the day of the week: Monday  
+Enter your preferred Celsius label (Celsius, Centigrade, or C): C  
+Monday Fahrenheit: -9999999  
+Monday C         : -5,555,572.8  
+
+### String.format
+
+The same principal works for the String class format method except it just doesn't print.
+
+`String celsiusOutput = String.format("%s %-10s %,.1f \n", day, cText, celsius);`
+
+### NumberFormat
+
+```java
+import java.util.Scanner;
+import java.text.NumberFormat;
+
+public class CurrencyDemo {
+    public static void main(String[] args) {
+        int items;
+        double itemCost, total;
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter the number of items: ");
+        items = input.nextInt();
+        System.out.print("Enter the cost per item: ");
+        itemCost = input.nextDouble();
+        total = items * itemCost;
+        System.out.println();
+        System.out.println("Unformatted Total: " + total);
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+        System.out.println("Formatted Total: " + currencyFormat.format(total));
+    }
+}
+```
+
+Enter the number of items: 12  
+Enter the cost per item: 12.909834982332  
+  
+Unformatted Total: 154.918019787984  
+Formatted Total: ¤154.92  
+
+Note that it does not know my location so `¤` is printed. But if it did know your location it would dynamically switch between the countries currency denominator such as `$` and `€`.
+
+You can force the locale i.e. 
+
+```java
+import java.util.Locale;
+import java.util.Scanner;
+import java.text.NumberFormat;
+
+public class CurrencyDemo {
+    public static void main(String[] args) {
+        int items;
+        double itemCost, total;
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter the number of items: ");
+        items = input.nextInt();
+        System.out.print("Enter the cost per item: ");
+        itemCost = input.nextDouble();
+        total = items * itemCost;
+        System.out.println();
+        System.out.println("Unformatted Total: " + total);
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
+        System.out.println("Formatted Total: " + currencyFormat.format(total));
+    }
+}
+```
+
+Enter the number of items: 98  
+Enter the cost per item: 5.9983  
+  
+Unformatted Total: 587.8334  
+Formatted Total: $587.83  
+
+### DecimalFormat
+
+`DecimalFormat formatter = new DecimalFormat("0.0");`
+
+This guarantees the number will be in the form of 0.0.
+
+If it is just 1 it would be 1.0 if it is 1.0320191209121 then it will be 1.0.
+
+If the number matches the specified format it grabs the number. If there are more decimal places it will round. 
+
+Further, if a % sign is found at the end the format method will automatically return a percentage value.
+
+Also, the number of 0s to the left of the decimal do not constrain the number.
+
+```java
+import java.text.DecimalFormat;
+
+public class DecimalFormatDemo {
+    public static void main(String[] args) {
+        DecimalFormat formatter1 = new DecimalFormat("0.0");
+        DecimalFormat formatter2 = new DecimalFormat("00.00");
+        DecimalFormat formatter3 = new DecimalFormat(".00");
+        DecimalFormat formatter4 = new DecimalFormat("0.00%");
+ 
+        System.out.println("0.0: " + formatter1.format(.8675309));
+        System.out.println("00.00: " + formatter2.format(.8675309));
+        System.out.println(".00: " + formatter3.format(.8675309));
+        System.out.println("0.00%: " + formatter4.format(.8675309));
+        System.out.println(".00: " + formatter3.format(8675309));
+    }
+}
+```
+
+0.0: 0.9  
+00.00: 00.87  
+.00: .87  
+0.00%: 86.75%  
+.00: 8675309.00  
+
+There are other pattern symbols as well.
+
+`#` allows you to specify optional digits:
+```java
+        DecimalFormat formatter = new DecimalFormat("#.00");
+        String numStr = formatter.format(.8675309);
+        System.out.println(numStr);
+```
+
+Output: .87
+
+[Class DecimalFormat docs](https://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html)
