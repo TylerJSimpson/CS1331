@@ -235,21 +235,97 @@ public class FahrenheitToCelsiusOperatorsTest {
 ```
 
 Precedence:
-* parenthesis takes precedence over logical operators
-* Relational operators > logical operators
+* parenthesis takes precedence over logical operators (AND/OR/NOT)
+* Relational operators (>, >=, etc) > logical operators (AND/OR/NOT)
 * ! takes precedence over AND and OR
 * AND takes precedence over OR
 
 
 ### Other Operators
 
+Boolean expressions can be extended to other operators as long as the final results are true or false values.
+
+```java
+if ((saturdayFahrenheit + sundayFahrenheit) / 2 >= MIN_TEMP) {
+    System.out.println("Yay! Nice weekend average.");
+}
+```
+
+Note that **mathetmatical operators** go before **relational operators** which go before **logical operators**.
+
+In the above java code the order is:
+1. (saturdayFahrenheit + sundayFahrenheit)
+2. / 2
+3. \>= MIN_TEMP
+
+This is a more appropriate way of structuring the statement:
+```java
+if (weekendAverage >= MIN_TEMP) {
+    System.out.println("Yay! Nice weekend average.");
+}
+```
+
 ### Short-circuit Evaluation
+
+**Short-circuit evaluation** is when java checks the logical operators based on the sidedness rule it will automatically skip a portion of the computation.
+
+For example:
+`(fahrenheit >= MIN_PARK_TEMP) && (fahrenheit <= MAX_PARK_TEMP)`
+
+In this case with the `&&` operator java knows if one side is False then the other side does not need to be calculated. It will check the left side first. If it determines that it is False then it will not calculate the right side of the equation.
+
+**Short-circuit evaluation** also applies to the `||` operator.
+
+`raining || !isValidTemp()`
+
+In this case Java again goes left to right. In this case, if the first portion `raining` is true then it skips the right side calculations.
+
+Because of the left to right processing and **short-circuit evaluation** a lot of computing can be cut out if development puts the less computationally intensive tasks on the left side of equations.
 
 ### Nesting
 
+So far we have experienced some nesting, particularly the `System.out` method within if and if-else statements.
+
+```java
+if ((fahrenheit >= MIN_PARK_TEMP) && (fahrenheit <= MAX_PARK_TEMP)) {
+    System.out.println("Yay! It's at least " + MIN_PARK_TEMP + "degrees but under " + MAX_PARK_TEMP + ".");
+    if (raining) {
+        System.out.println("Look up fun things to do in the rain.");
+    }
+    else {
+        System.out.println("Time to go to the park.");
+    }
+}
+```
+
 ### The Dangling Else Problem
 
+```java
+public class DnaglingElse {
+    public static void main(String[] args) {
+        int num = 9;
+        if (num > 0);
+        if (num < 10);
+        System.out.println("aaa");
+        else
+        System.out.println("bbb");
+    }
+}
+```
+
+Output: "aaa"
+
+While the above is legal and will compile and run the code format makes it difficult to follow.
+
 ### The Ternary Conditional Operator
+
+Java offers a one-line shortcut for if-else statements called the **ternary conditional operator**.
+
+`condition ? expression1 : expression2`
+
+Because the first operand is a condition and results in a boolean value - if the condition is true then the operator returns ther esult of evaluating the scond operand (expression 1). Otherwise, the operator returns the result of the third operand (expression2).
+
+
 
 ### Multi-way Branching
 
