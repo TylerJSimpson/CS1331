@@ -29,7 +29,7 @@ Java grew in popularity as it filled the gap of needing dynamic content on early
 
 Despite it's history, Java is still running today - reportedly on a few billion devices.
 
-![m1_history_of_java](../images/m1_history_of_java.png)
+![m1_history_of_java](../../images/m1_history_of_java.png)
 
 ### Basic Elements of Java Programs
 
@@ -94,7 +94,7 @@ The "instruction set" or type of machine code a processor understands may not be
 
 #### Java's hybrid approach
 
-![m1_java_hybrid_approach](../images/m1_java_hybrid_approach.jpg)
+![m1_java_hybrid_approach](../../images/m1_java_hybrid_approach.jpg)
 
 Java uses a hybrid approach to take advantage of compilation and interpreters.
 

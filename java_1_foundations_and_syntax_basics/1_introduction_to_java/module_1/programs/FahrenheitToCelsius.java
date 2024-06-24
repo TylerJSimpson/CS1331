@@ -1,3 +1,4 @@
+package module_1.programs;
 public class FahrenheitToCelsius {
     public static void main(String[] args) {
         int saturdayFahrenheit;

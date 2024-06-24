@@ -309,7 +309,7 @@ int can easily be converted to long, byte can easily be converted to short for e
 
 Even long can be converted to float.
 
-![legal_assignment_conversions](../images/m1_legal_assignment_conversions.png)
+![legal_assignment_conversions](../../images/m1_legal_assignment_conversions.png)
 
 ### Casting
 
@@ -346,7 +346,7 @@ So `int saturdayFahrenheit'` stores an actual int value.
 
 `String major;` stores an *address to a String*.
 
-![declaring_variables](../images/m1_declaring_variables.jpg)
+![declaring_variables](../../images/m1_declaring_variables.jpg)
 
 ### Instantiation
 

@@ -1,3 +1,4 @@
+package module_2.programs;
 import java.text.DecimalFormat;
 
 public class DecimalFormatDemo {
