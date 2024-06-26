@@ -1,3 +1,5 @@
+package module_2.homework;
+
 public class StringOperations {
     public static void main(String[] args) {
         String my_str = "Tyler Simpson";

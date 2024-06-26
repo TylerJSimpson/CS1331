@@ -1,3 +1,5 @@
+package module_4.programs;
+
 public class Averager3 {
     public static void main(String[] args) {
         double sum = 0;

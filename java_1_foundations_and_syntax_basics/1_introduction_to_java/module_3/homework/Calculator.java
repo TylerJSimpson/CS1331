@@ -1,14 +1,8 @@
+package module_3.homework;
 import java.util.Scanner;
 
 public class Calculator {
     public static void main(String[] args) {
-
-        // Set valid input strings
-        final String valid_add = "add";
-        final String valid_subtract = "subtract";
-        final String valid_multiply = "multiply";
-        final String valid_divide = "divide";
-        final String valid_alphabetize = "alphabetize";
 
         // Initialize variables used in switch statement
         int int_1;
@@ -20,7 +14,6 @@ public class Calculator {
         double return_dbl;
         String str_1;
         String str_2;
-        String return_str;
         String error_message = "Invalid input entered. Terminating...";
 
         // Instantiate Scanner

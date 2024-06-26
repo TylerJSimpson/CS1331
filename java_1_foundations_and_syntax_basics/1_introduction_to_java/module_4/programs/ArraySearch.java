@@ -1,3 +1,5 @@
+package module_4.programs;
+
 public class ArraySearch {
     public static void main(String[] args) {
         String[] concepts = {"abstraction","polymorphism","inheritance","encapsulation"};
