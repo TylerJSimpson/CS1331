@@ -241,10 +241,11 @@ public class FahrenheitToCelsiusOperatorsTest {
 ```
 
 Precedence:
-* parenthesis takes precedence over logical operators (AND/OR/NOT)
-* Relational operators (>, >=, etc) > logical operators (AND/OR/NOT)
-* ! takes precedence over AND and OR
-* AND takes precedence over OR
+1. PARENTHESIS: ()
+2. NOT: !
+3. RELATIONAL: >, >=, <=, <, !=, ==
+4. AND: &&
+5. OR: ||
 
 
 ### Other Operators
