@@ -7,6 +7,9 @@ public class Insect {
 
     //static constants/variables
     public static final double DIST_WEIGHT_LOSS_FACTOR = 0.001;
+    public static final double DEFAULT_WEIGHT = 1;
+    public static final int DEFAULT_X = 0;
+    public static final int DEFAULT_Y = 0;
     private static int population = 0;
     private static final String[] FACTS = {
         "The two main groups of insects are winged and wingless",
@@ -15,11 +18,19 @@ public class Insect {
         "Spiders are not considered insects"
     };
 
-    //constructor
-    public Insect(double initWeight, int initX, int initY) {
-        weight = initWeight;
-        x = initX;
-        y = initY;
+    //constructors
+    public Insect() {
+        this(DEFAULT_WEIGHT);
+    }
+
+    public Insect(double initWeight) {
+        this(initWeight, DEFAULT_X, DEFAULT_Y);
+    }
+
+    public Insect(double weight, int x, int y) {
+        this.weight = weight;
+        this.x = x;
+        this.y = y;
         population++;
     }
 
@@ -33,9 +44,9 @@ public class Insect {
         return x;
     }
 
-    public void setX(int newX) {
-        if (isLegalX(newX)) {
-            x = newX;
+    public void setX(int x) {
+        if (isLegalX(x)) {
+            this.x = x;
         }
     }
 
@@ -43,9 +54,9 @@ public class Insect {
         return y;
     }
 
-    public void setY(int newY) {
-        if (isLegalY(newY)) {
-            y = newY;
+    public void setY(int y) {
+        if (isLegalY(y)) {
+            this.y = y;
         }
     }
 
@@ -86,6 +97,10 @@ public class Insect {
     public static String produceRandomFact() {
         int index = (int)(Math.random() * ((FACTS.length - 1) + 1));
         return FACTS[index];
+    }
+
+    public String toString() {
+        return "weight: " + weight + ", x: " + x + ", y: " + y;
     }
 
     //test method

@@ -21,11 +21,25 @@
     7. [The toString Method](#the-tostring-method)
     8. [Putting Things Together (or A Simple OO Application)](#putting-things-together-or-a-simple-oo-application)
     9. [Die.java and the Random Class](#diejava-and-the-random-class)
+        1. [Variables](#variables)
+        2. [Constructor](#constructor)
+        3. [Methods](#methods)
+        4. [Test Method (Main)](#test-method-main)
     10. [Craps.java](#crapsjava)
-    11. [Finding the Errors](#finding-the-errors)
-
+        1. [Variables](#variables)
+        2. [Constructor](#constructor)
+        3. [Methods](#methods)
+        4. [Test Method (Main)](#test-method-main)
 3. [Inheritance](#inheritance)
-
+    1. [Terminology](#terminology)
+    2. [Hierarchies](#hierarchies)
+    3. [The Protected Modifier](#the-protected-modifier)
+    4. [Declaring Subclasses and Instance Variables](#declaring-subclasses-and-instance-variables)
+    5. [Subclass Constructors](#subclass-constructors)
+    6. [Inheriting and Overriding Methods](#inheriting-and-overriding-methods)
+    7. [Inheritance and The final Keyword](#inheritance-and-the-final-keyword)
+    8. [The abstract Modifier](#the-abstract-modifier)
+    9. [The Object Class and Overriding equals](#the-object-class-and-overriding-equals)
 
 ## Writing Classes 1
 
@@ -423,18 +437,393 @@ Setter header template:
 
 ### Overloading Constructors
 
+There are many exampels of constructor overloading in the Java docs. For example the Scanner class we have used can also take files and not just keyboard input.
+
+Recall the constructor in our Insect class.
+
+```java
+    //constructor
+    public Insect(double initWeight, int initX, int initY) {
+        weight = initWeight;
+        x = initX;
+        y = initY;
+        population++;
+    }
+```
+
+Let's create a default variables for X and Y and create a constructor that passes those as default if they are not specific when the object is instantiated.
+
+```java
+    public static final int DEFAULT_X = 0;
+    public static final int DEFAULT_Y = 0;
+```
+
+```java
+    //constructors
+    public Insect(double initWeight) {
+        weight = initWeight;
+        x = DEFAULT_X;
+        y = DEFAULT_Y;
+        population++;
+    }
+
+    public Insect(double initWeight, int initX, int initY) {
+        weight = initWeight;
+        x = initX;
+        y = initY;
+        population++;
+    }
+```
+
 ### Constructor Chaining and this()
+
+You will notice above that there is some repeated code in our 2 constructors. We like to follow DRY (Don't repeat yourself). Thankfully Java allows us to do this using **constructor chaining**.
+
+**In constructor chaining, a more specific constructor is always called by a less specific**.
+
+We will use the **this()** keyword which delegates the initialization rather than instantiating a new object.
+
+**Note when you use this() in a constructor it must be the first statement**.
+
+```java
+    //constructors
+    public Insect(double initWeight) {
+        this(initWeight, DEFAULT_X, DEFAULT_Y);
+    }
+
+    public Insect(double initWeight, int initX, int initY) {
+        weight = initWeight;
+        x = initX;
+        y = initY;
+        population++;
+    }
+```
 
 ### Using "this" as a reference
 
+**The this keyword can also be used as a reference within a constructor or non-static method**.
+
+Within a constructor it refers to the current object being initialized by that constructor. Within a method it refers to the object on which the method is being invoked.
+
+Note that currently our parameters `initWeight`, `initX`, and `initY` do not have the same name as our instance variables `weight`, `x`, and `y`.
+
+Using **this** we can simplify.
+
+```java
+    public Insect(double initWeight, int initX, int initY) {
+        weight = initWeight;
+        x = initX;
+        y = initY;
+        population++;
+    }
+```
+
+```java
+    public Insect(double weight, int x, int y) {
+        this.weight = weight;
+        this.x = x;
+        this.y = y;
+        population++;
+    }
+```
+
+**this** can also be used on non-static methods.
+
+```java
+    public void setX(int newX) {
+        if (isLegalX(newX)) {
+            x = newX;
+        }
+    }
+```
+
+```java
+    public void setX(int x) {
+        if (isLegalX(x)) {
+            this.x = x;
+        }
+    }
+```
+
 ### The toString Method
+
+**toString() returns a String representation of an object**
+
+You may have noticed how verbose it is becoming to call our simple program with only 3 instance variables. Imagine if it was more complex.
+
+```java
+public class InsectClient {
+    public static void main(String args[]) {
+        System.out.println(Insect.produceRandomFact());
+        Insect bug1 = new Insect(13, 31, 0);
+        System.out.println("BUG1");
+        System.out.println(bug1.getWeight());
+        System.out.println(bug1.getX());
+        System.out.println(bug1.getY());
+        System.out.println(bug1.getPopulation());
+
+        Insect bug2 = new Insect(13);
+        System.out.println("BUG2");
+        System.out.println(bug2.getWeight());
+        System.out.println(bug2.getX());
+        System.out.println(bug2.getY());
+        System.out.println(bug2.getPopulation());
+
+        Insect bug3 = new Insect();
+        System.out.println("BUG3");
+        System.out.println(bug3.getWeight());
+        System.out.println(bug3.getX());
+        System.out.println(bug3.getY());
+        System.out.println(bug3.getPopulation());
+    }
+}
+```
+
+Thankfully **toString()** can help us do this. We can call it as-is but we are not yet ready to interpret that. Instead we will override it to make it more user-friendly for the time being.
+
+First we must override it in our Insect class:
+```java
+    public String toString() {
+        return "weight: " + weight + ", x: " + x + ", y: " + y;
+    }
+```
+
+Now we can simplify our InsectClient class:
+```java
+public class InsectClient {
+    public static void main(String args[]) {
+        System.out.println(Insect.produceRandomFact());
+        Insect bug1 = new Insect(13, 31, 0);
+        System.out.println("BUG1");
+        System.out.println(bug1.toString());
+        System.out.println(Insect.getPopulation());
+
+        Insect bug2 = new Insect(13);
+        System.out.println("BUG2");
+        System.out.println(bug2.toString());
+        System.out.println(Insect.getPopulation());
+
+        Insect bug3 = new Insect();
+        System.out.println("BUG3");
+        System.out.println(bug3);
+        System.out.println(Insect.getPopulation());
+    }
+}
+```
+
+Notice that you actually don't even need to write `toString()` as shown in bug3. If a non-String object is passed as input to println (or print) Java will automatically call the object's `toString` method and use the returned String as the actual parameter for that println (or print) call.
 
 ### Putting Things Together (or A Simple OO Application)
 
+Let's put together all thes skills and create an object-oriented application. We are going to create a simplified version of the game of Craps. The goal is to roll a pair of dice and get a certain set of numbers at certain stages.
+
+Rules:
+1. If you roll 7 or 11 you win
+2. If you roll 2, 3, or 12 you lose
+3. If you did not roll any of the above you roll a "point number"
+4. Keep rolling until you repeat the point number and win or roll 7 and lose
+
+When building an object-oriented program the nouns tend to reprsent classes and the verbs tend to represent methods.
+
+Class: Die
+
+Method: Roll
+
+We will also make a main method for instantiating a game object and which will instantiate the dice objects.
+
 ### Die.java and the Random Class
+
+We know roll behavior should be included and we will need to be able to see the face value of the dice.
+
+#### Variables
+
+First let's set our instance variables and static constants/variables.
+
+```java
+    //instance variables
+    private Random rand;
+    private int faceValue;
+
+    //static constants/variables
+    public static final int SIDES = 6;
+```
+
+We use `SIDES` as a constant to use as a boundary later. We do not break encapsulation by making it public since it is final.
+
+`rand` and `faceValue` ase instance variables. In the case of `rand` it is also a reference variable. We use `rand` to generate random ints.
+
+#### Constructor
+
+Now let's look at the Constructor.
+
+```java
+    //constructors
+    public Die() {
+        faceValue = 1;
+        rand = new Random();
+    }
+```
+
+The constructors job is to initialize the object. `faceValue` of 1 is chosen arbitrarily. Recall it would default to 0 otherwise which we do not want since there is no 0 on a dice. `rand` object is also created.
+
+#### Methods
+
+Now let's look at the Methods.
+
+```java
+    //methods
+    public int roll() {
+        faceValue = rand.nextInt(SIDES) + 1;
+        return faceValue;
+    }
+
+    public int getFaceValue() {
+        return faceValue;
+    }
+
+
+```
+
+`roll()` starts with `rand.nextInt()` which accepts a bound parameter and returns a value between 0 (inclusive) and the specified bound (exclusive).
+
+This means the range is 0-5. We do not want 0 and we also want 6 so we can just add +1 to change the range from 1-6.
+
+Next we have our getter method for `faceValue`. We do not have a setter method because it is not required. The only way to externally set the `faceValue` of a Die object is to run the `roll()` method.
+
+Next we overwrite the `toString()` method to return the `faceValue`.
+
+#### Test Method (Main)
+
+Now let's look at the Main method which serves as a test.
+
+```java
+    //test method
+    public static void main(String[] args) {
+        Die die1 = new Die();
+
+        System.out.println(die1);
+        System.out.println(die1.roll());
+        System.out.println(die1.roll());
+    }
+```
+
+We test by creating a Die object, printing the variables and then running the `roll()` method a couple times.
 
 ### Craps.java
 
-### Finding the Errors
+Now let's make a class for the game itself including the different stages of the game.
+
+#### Variables
+
+Because the game needs 2 die, we declare them here.
+
+Instance variables:
+```java
+    //instance variables
+    private Die die1, die2;
+    private int point;
+```
+
+Note that there are no static constants/variables in this case.
+
+#### Constructor
+
+In the constructor we instantiate the `Die()` objects.
+
+Constructor:
+```java
+    //constructors
+    public Craps() {
+        die1 = new Die();
+        die2 = new Die();
+    }
+```
+
+Point is not instantiated in the constructor so it's value defaults to 0.
+
+#### Methods
+
+```java
+    //methods
+    private int toss() {
+        int total = die1.roll() + die2.roll();
+        System.out.println("Die one: " + die1.getFaceValue() + ", Die two: " + die2.getFaceValue());
+        return total;
+    }
+
+    public void go() {
+        point = toss();
+        System.out.println("Point: " + point);
+        if ((point == 7) || (point == 11)) {
+            System.out.println("Winner!");
+        }
+        else if ((point == 2) || (point == 3) || (point == 12)) {
+            System.out.println("You lost!");
+        }
+        else {
+            System.out.println("Entering Stage 2");
+            stage2();
+        }
+    }
+
+    private void stage2() {
+        
+        boolean endGame = false;
+
+        while (!endGame) {
+            int total = toss();
+
+            System.out.println("Total: " + total);
+            if (total == point) {
+                System.out.println("Winner!");
+                endGame = true;
+            }
+            else if (total == 7) {
+                System.out.println("You lost!");
+                endGame = true;
+            }
+        }
+    }
+```
+
+`toss()` was named this way since we already say `roll()` for individual die. This way `toss()` represents the result of both rolls. This method adds up the values of the die and returns them.
+
+`go()` begins the Craps game. It determins if you win, lose, or enter stage 2 based on the points.
+
+`stage2()` starts with a loop variable that starts as false. So while the game isn't over, keep tossing. Total is printed and checked to see if it matches point then you win. Alternatively if you roll a 7 you lose. 
+
+#### Test Method (Main)
+
+This was used as a means to test in our Die object. Here it is used to start the game.
+
+```java
+    //main method
+    public static void main (String[] args) {
+        // Create a new instance of the game of craps
+        Craps game = new Craps();
+
+        // Start the game
+        game.go();
+    }
+
+```
 
 ## Inheritance
+
+### Terminology
+
+### Hierarchies
+
+### The Protected Modifier
+
+### Declaring Subclasses and Instance Variables
+
+### Subclass Constructors
+
+### Inheriting and OVerriding Methods
+
+### Inheritance and The final Keyword
+
+### The abstract Modifier
+
+### The Object Class and Overriding equals
