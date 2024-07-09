@@ -810,20 +810,258 @@ This was used as a means to test in our Die object. Here it is used to start the
 
 ## Inheritance
 
+We just created an Insect class. What if we wanted to create a specific type of insect like a wasp? Insect class does not have some of the features like flying. But, we can re-use the class we already created and focus on adding the new features such as flying and altitude.
+
+This concept is called **inheritance**.
+
 ### Terminology
+
+**inheritance** describes the transfer of attributes and behaviors from one class to another.
+
+A derived class like YellowJacket or Ant is called a **subclass** or **child class**.
+
+The class through which another was derived from is called a **superclass** or **parent class**.
 
 ### Hierarchies
 
+![hierarchies](/images/m2_hierarchies.jpg)
+
+In the picture above you can see the 4 child classes to the 1 parent class Insect.
+
+Hierarchies can be modeled using Unified Modeling Language (UML). In these diagrams the arrow always points to the parent with the base on each child. I drew it in since the screenshot did not take well.
+
+Note that a parent class can have infinite children but a child can only have 1 parent. But, you can chain parents. with an **is a** relationship.
+
+![multiple_hierarchies](/images/m2_multiple_hierarchies.jpg)
+
+You could even add FlyingInsect between Insect and Yellowjacket. 
+
+Also note that technically every class you create has the parent class of `Object` that is part of Java. Things like `toString()` are methods that every class inherits from it.
+
 ### The Protected Modifier
+
+```java
+public class Canine {
+
+    protected double size;
+    
+    public Canine(double size) {
+        this.size = size;
+    }
+
+    public void bark() {
+        System.out.println("Woof Woof");
+    }
+
+}
+```
+
+Notice the new **visibility modifier** `protected`. In this case say we wanted to later create child classes wolf and dog. If `size` was `private` it would nto be inherited by children. If it was `public` then it would violate **encapsulation**.
+
+**Protected members** can only be accessed by subclasses and any other classes within the same package.
+
+|Modifier|Class|Package|Subclass|World|
+|--------|-----|-------|--------|-----|
+|public|Y|Y|Y|Y|
+|protected|Y|Y|Y|N|
+|none/default|Y|Y|N|N|
+|private|Y|N|N|N|
 
 ### Declaring Subclasses and Instance Variables
 
+```java
+public class Dog extends Canine {
+    
+    protected String name;
+
+    public Dog(String name, double size) {
+        super(size);
+        this.name = name;
+    }
+
+    public void fetch() {
+        System.out.println("Run");
+        System.out.println("Clinch");
+        System.out.println("Return");
+    }
+
+}
+```
+
+```java
+public class Wolf extends Canine {
+    
+    protected int rank;
+
+    public Wolf(double size, int rank) {
+        super(size);
+        this.rank = rank;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void bark() { //3 times the default canine bark
+        for (int i = 1; i <= 3; i++)
+            super.bark();
+    }
+
+    public static void main(String[] args) {
+        Wolf alpha = new Wolf(17.1, 1);
+        alpha.bark();
+    }
+
+}
+```
+
 ### Subclass Constructors
 
-### Inheriting and OVerriding Methods
+Note in the constructors of both Dog and Wolf above the keyword **super**:
+
+```java
+    public Dog(String name, double size) {
+        super(size);
+        this.name = name;
+    }
+```
+
+```java
+    public Wolf(double size, int rank) {
+        super(size);
+        this.rank = rank;
+    }
+```
+
+The **super** keyword in the form of a method calls the superclass' constructor.
+
+An important feature with inheritance in Java is that if you don't explicitly invoke a superclass' constructor with a super call in a child class' constructor, Java automatically calls the parameterless super constructor at the very start fo the child's constructor.
+
+So say instead of `super(size);` you used `this.size = size` in the Dog class, you would get an error since super is not called.
+
+### Inheriting and Overriding Methods
+
+```java
+public class Dog extends Canine {
+    
+    protected String name;
+
+    public Dog(String name, double size) {
+        super(size);
+        this.name = name;
+    }
+
+    public void fetch() {
+        System.out.println("Run");
+        System.out.println("Clinch");
+        System.out.println("Return");
+    }
+
+    public static void main(String[] args) {
+        Dog spot = new Dog("Spot", 9.6);
+        spot.bark();
+    }
+
+}
+```
+
+Notice Dog class does not define a `bark()` method but we call it in the main method above. This is because a child can call the parents method.
+
+You can also override a parent's method such as what we did in the Wolf class. All you have to do is re-write the method with the same signature. So for example since the parent `bark()` accepts no parameters you could not modify it in the Wolf class to accept parameters. You can change the visibility i.e. a parent's method could be private and a child can overwrite it as public but the reverse is not allowed. The visibility can only increase or stay the same.
+
+```java
+    public void bark() { //3 times the default canine bark
+        for (int i = 1; i <= 3; i++)
+            super.bark();
+    }
+```
 
 ### Inheritance and The final Keyword
 
+We have added `final` to variables previously, now let us look at adding it to methods and classes.
+
+```java
+public final void bark() {
+    System.out.println("Woof Woof");
+}
+```
+
+If we were to change the `bark()` method to final in the Canine class then Wolf would not longer be able to override `bark()`. 
+
+**When you have a method that forms data sensitive operations or is highly optimized for a specific process, it is often a good practice to make it final so it is adhered to as the hierarchy depth increases**.
+
+You can also make Classes final in their header `public final class MiniaturePoodle `
+
 ### The abstract Modifier
 
+The `abstract` modifier can be applied to methods and classes that are not fully defined.
+
+* An abstract class is a class that has at least one abstract method
+
+* An abstractmethod is a method that has a declaration but not definition
+
+```java
+public abstract class Canine {
+
+    protected double size;
+    
+    public Canine(double size) {
+        this.size = size;
+    }
+
+    public void bark() {
+        System.out.println("Woof Woof");
+    }
+
+    public abstract void groom();
+
+}
+```
+
+Note this version of Canine with an abstract method and class.
+
+**An abstract method has a method header but no body**. You cannot instantiate an abstract class. 
+
+By adding an abstract method `groom()` instead of leaving it out we can enforce that any class that claims it is a Canine has a `groom()` method. They can override it just as if it is a fully defined method.
+
+An abstract class allows us to represent generic objects or things.
+
 ### The Object Class and Overriding equals
+
+As we mentioned all classes are children of class Object. Like `toString()` there is also `equals()`. 
+
+`equals()` default value returns true of two variables are aliases (point to the same object) i.e. `x.equals(y)`. This is really not helpful for us in the case of inheritance because if we were to instantiate 10 Dog objects they would all be equal via this default method.
+
+To override the `equals()` method you *must* use the following header:
+
+```java
+public boolean equals(Object o)
+```
+
+Where we can change `o` to anything we want to represent the input.
+
+```java
+    public boolean equals(Object o) {
+        if (!(o instanceof Dog)) {
+            return false;
+        }
+        Dog doggy = (Dog) o;
+        return ((doggy.size ==size) && (doggy.name.equals(name)));
+    }
+```
+
+If the method passes the if block we can be certian that o refers to a Dog object. Note this is important since technically any object can be passed into this method we need to be sure it is a Dog.
+
+Next the method returns true ONLY if both the `name` AND `size` are the same.
+
+If we update the main method:
+
+```java
+    public static void main(String[] args) {
+        Dog dog1 = new Dog("Spot", 9.60001);
+        Dog dog2 = new Dog("Spot", 9.6);
+        System.out.println(dog1.equals(dog2));
+    }
+```
+
+You will notice that now the Dog objects will no longer equal making the output false.
