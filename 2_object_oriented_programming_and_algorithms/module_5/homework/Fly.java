@@ -1,4 +1,4 @@
-public class Fly {
+public class Fly extends Pond {
     
     //Instace variables
     private double mass;

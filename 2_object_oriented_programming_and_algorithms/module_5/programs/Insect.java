@@ -34,7 +34,7 @@ public class Insect {
         population++;
     }
 
-    //methods
+    //Methods
 
     public double getWeight() {
         return weight;
