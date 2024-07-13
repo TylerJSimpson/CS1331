@@ -44,16 +44,16 @@ public class Fly extends Pond {
     }
 
     public void grow(int amount) {
-        if (amount >= 0) {
-            mass = mass + amount;
-            if (mass < 20) {
-                speed = speed + amount;
+        for (int counter = 0; counter < amount; counter++) {
+            mass++;
+
+            if (mass <= 20) {
+                speed++;
             }
             else {
-                speed = speed + (amount / 2);
+                speed = speed - 0.5;
             }
         }
-
     }
 
     public boolean isDead() {

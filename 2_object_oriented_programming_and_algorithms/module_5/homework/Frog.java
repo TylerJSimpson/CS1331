@@ -5,49 +5,27 @@ public class Frog extends Pond {
     private int age;
     private double tongueSpeed;
     private boolean isFroglet;
-    protected String species;
+    private static String species = "Rare Pepe";
 
     //Static constants/variables
-    public static final String initSpecies = "Rare Pepe";
     public static final int initAge = 5;
     public static final double initTongueSpeed = 5;
     public static final boolean initIsFroglet = false;
 
     //Constructors
     public Frog(String name) {
-        this.name = name;
-        this.age = initAge;
-        this.tongueSpeed = initTongueSpeed;
-        this.isFroglet = initIsFroglet;
-        this.species = initSpecies;
+        this(name, initAge, initTongueSpeed);
     }
 
     public Frog(String name, double ageInYears, double tongueSpeed) {
-        this.name = name;
-        this.age = (int) (ageInYears * 12);
-        this.tongueSpeed = tongueSpeed;
-        this.species = initSpecies;
-
-        if ((age > 1) && (age < 7)) {
-            isFroglet = true;
-        }
-        else {
-            isFroglet = false;
-        }
+        this(name, (int) (ageInYears *12), tongueSpeed);
     }
 
     public Frog(String name, int age, double tongueSpeed) {
         this.name = name;
         this.age = age;
         this.tongueSpeed = tongueSpeed;
-        this.species = initSpecies;
-
-        if ((age > 1) && (age < 7)) {
-            isFroglet = true;
-        }
-        else {
-            isFroglet = false;
-        }
+        this.isFroglet = ((age > 1) && (age < 7));
     }
 
     //Methods
@@ -55,12 +33,12 @@ public class Frog extends Pond {
         return species;
     }
 
-    public void setSpecies(String species) {
-        this.species = species;
+    public static void setSpecies(String setSpecies) {
+        species = setSpecies;
     }
 
     public void grow() {
-        age = age + 1;
+        age++;
 
         if (age < 12) {
             tongueSpeed += 1;
@@ -79,9 +57,9 @@ public class Frog extends Pond {
         for (int counter = 0; counter < inputAge; counter++) {
             age++;
     
-            if (age < 12) {
+            if (age <= 12) {
                 tongueSpeed += 1;
-            } else if (age >= 30 && tongueSpeed > 5) {
+            } else if (age > 30 && tongueSpeed > 5) {
                 tongueSpeed -= 1;
             }
     
@@ -111,10 +89,9 @@ public class Frog extends Pond {
     public String toString() {
         String returnString;
         if (isFroglet) {
-            returnString = "My name is " + name + " and I'm a rare froglet! I'm " + age + " months old and my tongue has a speed of " + tongueSpeed + ".";
-        }
-        else {
-            returnString = "My name is " + name + " and I'm a rare frog. I'm " + age + " months old and my tongue has a speed of " + tongueSpeed + ".";
+            returnString = "My name is " + name + " and I'm a rare froglet! I'm " + age + " months old and my tongue has a speed of " + String.format("%.2f", tongueSpeed) + ".";
+        } else {
+            returnString = "My name is " + name + " and I'm a rare frog. I'm " + age + " months old and my tongue has a speed of " + String.format("%.2f", tongueSpeed) + ".";
         }
         return returnString;
     }
