@@ -185,23 +185,225 @@ Now we can remove it from the header of the `Canine` subclasses. Also, since `Ca
 
 ### Writing a Sorting Method
 
+Suppose we need to sort a group of objects like an array of `wolves` in ascending order. We already have `rank` defined so we can use that. The lower the `rank` the higher the order so it should be `rank` 1, 2, 3, 4.
 
+There are many established sorting methods:
+* Merge Sort
+* Insertion Sort
+* Bubble Sort
+* Quicksort
+* Selection Sort
+
+The sort method would accept a reference to a `Wolf` array and stored as a formal parameter. For example:
+```java
+public void quickSortWolfArray(wolf[] pack) {
+
+}
+```
+
+Inside you will see something like:
+
+`pack[someIndex].getRank() > pack[anotherIndex].getRank()`
+
+What if we want to sort an array of objects of some other type and types that dont exist yet.
+
+These objects likely won't have a rank so we need to generalize the algorithm.
+
+For the header:
+```java
+public void quickSort(Object[] arr) {
+
+}
+```
+
+Inside we will use `compareTo()` which delegates to the objects own `compareTo()` method.
+
+`((SomeType)arr[someIndex]).compareTo(arr[anotherIndex])`
 
 ### Comparing Objects
 
+`compareTo() rules`:
+
+|Comparison Result|ReturnValue|
+|-----------------|-----------|
+|Calling object is less|negative int|
+|Calling object is greater|positive int|
+|both are equal|0|
+
+For example rank2.compareTo(rank1) = positive int because calling object is larger
+
+The problem with using object as the array type is that the class does not have a `compareTo()` method built in. While we can pass any object array in, nothing specifies it must have a `compareTo()` method, and if it doesn't, it will generate an error.
+
+Recall that **an interface provides a way of enforcing that a calss declares and/or defines one or more methods** and if not the class will not compile.
+
+The interface is like a contract. If a class implements an interface it's bound to a contract represented by a set of abstract methods.
+
 ### java.long.Comparable
+
+Java has a built in interface with a `compareTo`() method caled `Comparable` in the java.lang package.
+
+`java.lang.Comparable`
 
 ### Arrays.sort()
 
+Java also has it's own static sorting methods for arrays of objects.
+
+`java.util.Arrays`
+
+This method uses Timsort as opposed to Quicksort like we looked at before.
+
+The method in the array class is called `sort()`. It performs a `comparable` cast to the reference calling `compareTo()` to temporarily treat the reference as a comparable object in order to invoke compareTo.
+
 ### Writing a compareTo() method
+
+Let's take a look at writing a `compareTo()` method using our `Wolf` class.
+
+1st we must update the header:
+```java
+public class Wolf extends Canine implements Groomable, Comparable {
+```
+
+Note `extends` must always come before `implements`. To `implement` multiple interfaces just separate them with commas.
+
+2nd we must create a `compareTo()` method:
+```java
+public int compareTo(Object anotherWolf) {
+    return -(rank - ((Wolf)anotherWolf).rank);
+}
+```
+
+In this example if the rank of calling `Wolf` is 1 and the rank of the reference `Wolf` is 4 then 1 - 4 = -3. But if you recall we want a return value of a positive int if the calling object is greater so we add a negative sign. Now a 3 is returned.
+
+Notice the `(Wolf)` cast is performed on the formal parameter variable. This is because `anotherWolf` is an object class reference and `rank` is a `Wolf` property. Without the cast we will get a compiler error.
+
+We can test this by updating the main method:
+```java
+    public static void main(String[] args) {
+        Wolf alpha = new Wolf(17.1, 1);
+        Wolf puppy = new Wolf(3, 10);
+        System.out.println(alpha.compareTo(puppy));
+    }
+```
+
+Output:
+```
+9
+```
 
 ### Generic Types and Comparable
 
+Let us improve the `Wolf` `compareTo()` method we created above.
+
+In the main method we could write the below and the program would compile:
+```java
+System.out.println(alpha.compareTo("Hello, World!"));
+```
+
+Of course there would be an error at runtime trying to cast a `String` to a `Wolf`.
+
+Waiting until runtime to find errors is problematic, especially in large programs. We need a solution that can check the type compatability of the actual parameters that `compareTo()` accepts and the objects to which that input is being compared.
+
+**generic type** was introduced by Java to solve this problem. It is an interface or class that is capable of accepting input that identifies the kidns of data it can work with.
+
+In the Java docs you will see `Interface Comparable<T>` where the `T` represents a type as a form of parameter that allows us to give the interface information about how it will be used. We can pass in a type to `Comparable` which will then limit the kinds of objects used in `compareTo()`. 
+
+`int compareTo(T o)`
+
+To do this let's update the `Wolf` class header to include the parameterized version of `Comparable`:
+```java
+public class Wolf extends Canine implements Groomable, Comparable<Wolf> {
+```
+
+Now we can update the `compareTo()` method to accept `Wolf` as opposed to generic object:
+```java
+    public int compareTo(Wolf anotherWolf) {
+        return -(rank - ((Wolf)anotherWolf).rank);
+    }
+```
+
 ### An Arrays.sort() Example
+
+Let's use our `Wolf` class to implement `Arrays.sort()`.
+
+
+```java
+import java.util.Arrays;
+public class Wolf extends Canine implements Groomable, Comparable<Wolf> {
+    
+    protected int rank;
+
+    public Wolf(double size, int rank) {
+        super(size);
+        this.rank = rank;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void bark() { //3 times the default canine bark
+        for (int i = 1; i <= 3; i++)
+            super.bark();
+    }
+
+    public void bark(int barkMultiple) {
+        for (int i = 1; i <= barkMultiple; i++) {
+            super.bark();
+        }
+    }
+
+    public void groom() {
+        System.out.println("lick");
+    }
+
+    public int compareTo(Wolf anotherWolf) {
+        return -(rank - ((Wolf)anotherWolf).rank);
+    }
+
+    public String toString() {
+        return ("Rank " + rank + ", Size "+ size);
+    }
+
+    public static void main(String[] args) {
+        Wolf[] pack = {
+            new Wolf(17.1, 2),
+            new Wolf(3, 10),
+            new Wolf(9.2, 7),
+            new Wolf(9.1, 8),
+            new Wolf(5, 9),
+            new Wolf(10, 6),
+            new Wolf(16, 5)
+        };
+
+        System.out.println("Unsorted Pack: " + Arrays.toString(pack));
+        Arrays.sort(pack);
+        System.out.println("===============================");
+        System.out.println("Sorted Pack: " + Arrays.toString(pack));
+    }
+
+}
+```
+
+1. We added `import java.util.Arrays`
+2. We created a `toString()` method overwrite
+3. We updated the main method to illustrate the sorting
 
 ### A Deeper Look at Sorting Algorithms
 
+Next we are going to take a look at 3 separate sorting algorithms:
+* Selection Sort
+* Merge Sort
+* Insertion Sort
+
+We mentioned **Timsort** earlier. This is a hybrid of **insertion** and **merge** sort.
+
+
 ### Selection Sort in a Nutshell
+
+* Scans a list for smallest item
+* Places item in order
+* Scans remaining (unsorted) items for next smallest
+* Places that item in order
 
 ### Selection Sort Walkthrough
 
