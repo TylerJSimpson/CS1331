@@ -407,17 +407,199 @@ We mentioned **Timsort** earlier. This is a hybrid of **insertion** and **merge*
 
 ### Selection Sort Walkthrough
 
+Where n is the size of the list, selection sort makes n-1 passes.
+
 ### Selection Sort Method
+
+```java
+public class TestAlgorithms {
+
+    public static void selectionSort(int[] list) {
+        int minIndex; // Keep track of minimum index
+        int nextSmallest; // Temporary variable used to perform swaps
+
+        for (int unSortedStart = 0; unSortedStart < list.length-1; unSortedStart++) {
+            minIndex = unSortedStart;
+            for (int currentIndex = unSortedStart+1; currentIndex < list.length; currentIndex++) { // Start counting after minIndex
+                if (list[currentIndex] < list[minIndex]) {
+                    minIndex = currentIndex;
+                }
+            }
+
+            nextSmallest = list[minIndex]; // 
+            list[minIndex] = list[unSortedStart]; // 
+            list[unSortedStart] = nextSmallest; // 
+        }
+
+    }
+
+    public static void main(String[] args) {
+    }
+}
+```
 
 ### Adapting the Selection Sort Method for Other Types
 
+Our `selectionSort()` was only able to accept int arrays. A few changes can be done to allow for the algorithm to accept doubles and objects for example.
+
+```java
+    public static void selectionSort(double[] list) {
+        int minIndex; // Keep track of minimum index
+        double nextSmallest; // Temporary variable used to perform swaps
+
+        for (int unSortedStart = 0; unSortedStart < list.length-1; unSortedStart++) {
+            minIndex = unSortedStart;
+            for (int currentIndex = unSortedStart+1; currentIndex < list.length; currentIndex++) { // Start counting after minIndex
+                if (list[currentIndex] < list[minIndex]) {
+                    minIndex = currentIndex;
+                }
+            }
+
+            nextSmallest = list[minIndex]; // 
+            list[minIndex] = list[unSortedStart]; // 
+            list[unSortedStart] = nextSmallest; // 
+        }
+
+    }
+```
+
+```java
+    public static void selectionSort(Comparable[] list) {
+        int minIndex; // Keep track of minimum index
+        Comparable nextSmallest; // Temporary variable used to perform swaps
+
+        for (int unSortedStart = 0; unSortedStart < list.length-1; unSortedStart++) {
+            minIndex = unSortedStart;
+            for (int currentIndex = unSortedStart+1; currentIndex < list.length; currentIndex++) { // Start counting after minIndex
+                if (list[currentIndex].compareTo(list[minIndex]) < 0) {
+                    minIndex = currentIndex;
+                }
+            }
+
+            nextSmallest = list[minIndex]; // 
+            list[minIndex] = list[unSortedStart]; // 
+            list[unSortedStart] = nextSmallest; // 
+        }
+
+    }
+```
+
+Notice in the Object comparison we had to use the `compareTo()` method instead of the numerical operators.
+
 ### The Merge Sort Algorithm
+
+* repetitively breaks list into halves
+* repetitively merges halves into order
+
+![m6_merge_layers](/images/m6_merge_layers.png)
+
+![m6_merge_table](/images/m6_merge_table.png)
+
+The 1st item of each sublist has the lowest number in that sublist since they are both sorted. The algorithm checks both and writes the lower to the new list. It then moves to the next number in the list that was written from. So since 2 < 3 it moves on to 6. Since 5 < 6 it then switches to the right list after writing 5.
 
 ### Merge Sort Implementation
 
+Merge sort will be focused on more in future classes.
+
+```java
+public static void mergeSort(int[] list, int start, int end) {
+    if (start == end) {
+        return;
+    } else if (start == end-1) {
+        if (list[start] <= list[end]) {
+            return;
+        } else { // swap
+            int temp = list[start];
+            list[start] = list[end];
+            list[end] = temp;
+        }
+    }
+    
+    int mid = (end-start)/2;
+    mergeSort(list, start, start + mid);
+    mergeSort(list, start + mid + 1, end);
+    merge(list, start, start + mid, end);
+}
+```
+
+```java
+private static void merge(int[] list, int leftHalfStart, int rightHalfStart, int end) {
+    int leftHalfSize = rightHalfStart - leftHalfStart + 1;
+    int rightHalfSize = end - rightHalfStart;
+
+    int[] leftHalf = new int[leftHalfSize];
+    int[] rightHalf = new int[rightHalfSize];
+
+    for (int i=0; i<leftHalfSize; ++i)
+        leftHalf[i] = list[leftHalfStart + i];
+    for (int j=0; j<rightHalfSize; ++j)
+        rightHalf[j] = list[rightHalfStart + 1+ j];
+
+    int i = 0;
+    int j = 0;
+
+    int k = leftHalfStart;
+    while (i < leftHalfSize && j < rightHalfSize) {
+        if (leftHalf[i] <= rightHalf[j]) {
+            list[k] = leftHalf[i];
+            i++;
+        } else {
+            list[k] = rightHalf[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < leftHalfSize) {
+        list[k] = leftHalf[i];
+        i++;
+        k++;
+    }
+
+    while (j < rightHalfSize) {
+        list[k] = rightHalf[j];
+        j++;
+        k++;
+    }
+}
+```
+
 ### Comparing Algorithms using Complexity Analysis
 
+Algorithms are typically represented by how fast they are and how much space they use. We will mostly focus on the speed portion. 
+
+To evaluate the speed you can use a stopwatch-based evaluation:
+```java
+long start = System.nanoTime();
+selectionSort(input); //you can change this to any code block to collect its runtime
+long end = System.nanoTime();
+System.out.println("Elapsed time in ns:" + (end - start));
+```
+
+Using this stopwatch-based evaluation you can fill out a table to compare two algorithms.
+
+|Input Size|Selection Sort (seconds)|Merge Sort (seconds)|
+|----------|------------------------|--------------------|
+|10|?|?|
+|100|?|?|
+|1,000|?|?|
+|10,000|?|?|
+|100,000|?|?|
+|1,000,000|?|?|
+
+While the talbe is important, more important are the extrapolations we can draw from it.
+
+For example, does the amount of time that an algorithm takes stay constant regardless of how big the input is? If the amount of time grows as input size increases, then is the growth directly proportional?
+
+These sort of questions are **complexity analysis**.
+
+There are many other questions that may come up though. For example what computer was used, what operating system, what java version, background processes, etc.
+
+To avoid device-specific factors, you can represent an algorithm's runtime using the number of operations it takes to complete a task as opposed to elapsed time.
+
 ### Constant Time
+
+There is no constant-time sorting algorithm. An example of one would be an algorithm that checks the 1st index of an array and returns null if it is 0 so no matter the size of the array if the 1st index is 0 then it returns null.
 
 ### Linear Time and The Linear Search Algorithm
 
