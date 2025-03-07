@@ -340,7 +340,7 @@ We saw how to declare and assign variables of primitive types previously:
 
 `<identifier> = <value>`
 
-Since objects are more complex than primitive type value their data is stored in a separately managed part of memory cvalled the heap.
+Since objects are more complex than primitive type value their data is stored in a separately managed part of memory called the heap.
 
 So `int saturdayFahrenheit'` stores an actual int value.
 
@@ -476,7 +476,7 @@ A new string object is returned. The calling object is not actually changed by t
 
 It has not been mentioned yet but above `str` is a **formal parameter** which is a variable that is listed in a method header and will be assigned to a value before the method's statements are exectuted.
 
-Not ethat the `+` operator can be used as shorthand for concat.
+Note that the `+` operator can be used as shorthand for concat.
 
 `major + interest` is the same as `major.concat(interest)`
 
@@ -494,7 +494,7 @@ The return value: "Computer Sciencelong walks on the beach"
 
 example:
 
-`String toLowerCase()`
+`String replace()`
 
 `String interest = "Computer science, long walks on the beach";` 
 
@@ -580,11 +580,11 @@ import java.util.Scanner;
 
 public class FahrenheitToCelsius {
     public static void main (String[] args) {
-        Scanner intput = new Scanner(System.in); //read keyboard input
+        Scanner input = new Scanner(System.in); //read keyboard input
     }
 }
 ```
-*Note that we must important Scanner it is not immediately available like other classes we have seen*
+*Note that we must import Scanner it is not immediately available like other classes we have seen*
 
 The stream that connects computer programs to the data from the keyboard is called the **standard input stream (or standard in)**. 
 
@@ -626,7 +626,7 @@ javac FahrenheitToCelsius.java
 java FahrenheitToCelsius
 ```
 
-This will prompt us to enter a Fahrenheit value. Note that it will wait indefinitely for an input and it will consider the input as complete once a white space is encounters. **All leading whitespace will be ignored**. Becuase of this, you can type enter, space, tab as many times as you want before typing an int and it will not affect the output.
+This will prompt us to enter a Fahrenheit value. Note that it will wait indefinitely for an input and it will consider the input as complete once a white space is encounters. **All leading whitespace will be ignored**. Because of this, you can type enter, space, tab as many times as you want before typing an int and it will not affect the output.
 
 ### Scanner Errors
 
@@ -726,7 +726,7 @@ You can clean this up though:
 
 ### More on Packages
 
-A **package** is a logical grouping of Classes based on the functions they provide. Earlier we saw System, String, and others which are all in the package called java.lang. java.lang contains the fundamental functions of Java and thus you do not need to manually import them. Clsses that are not part of this java.lang package must be manually imported such as what we did with Scanner `import java.util.Scanner;`.
+A **package** is a logical grouping of Classes based on the functions they provide. Earlier we saw System, String, and others which are all in the package called java.lang. java.lang contains the fundamental functions of Java and thus you do not need to manually import them. Classes that are not part of this java.lang package must be manually imported such as what we did with Scanner `import java.util.Scanner;`.
 
 `import packageName.memberName;`
 

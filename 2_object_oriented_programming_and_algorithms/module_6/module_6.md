@@ -587,7 +587,7 @@ Using this stopwatch-based evaluation you can fill out a table to compare two al
 |100,000|?|?|
 |1,000,000|?|?|
 
-While the talbe is important, more important are the extrapolations we can draw from it.
+While the table is important, more important are the extrapolations we can draw from it.
 
 For example, does the amount of time that an algorithm takes stay constant regardless of how big the input is? If the amount of time grows as input size increases, then is the growth directly proportional?
 
@@ -603,13 +603,108 @@ There is no constant-time sorting algorithm. An example of one would be an algor
 
 ### Linear Time and The Linear Search Algorithm
 
+With linear time, doubling the input size doubles the runtime i.e. direct proportionality where if input size increases 100x then run time increases 100x. When X and Y are proportional this creates a straight line on the run time vs input time graph.
+
+An example of this is a worst case `Sequential Search`.
+
+
+I.e. searching for 72 in this array {12,531,53,3412,72}.
+
+In this case n = 5. If you double the length of the array but still have 72 at the end and search for it then 2 * n = 2 * 5. 
+
+Note we are looking at the worst case. This is actually common with how algorithms are analyzed. 
+
+Example `Sequential (linear) Search` implementation:
+
+```java
+public static int linearSearch(Comparable target, Comparable[] list) {
+    int index = 0;
+    while (index < list.length) {
+        if (list[index].compareTo(target) == 0)
+            return index;
+        else
+            index++;
+    }
+    return -1;
+}
+```
+
 ### Some Empirical Results (Merge Sort vs. Selection Sort)
+
+When comparing `selection sort` vs `merge sort` at an input size of 10,000 `selection sort` may take about 0.0075 seconds while `merge sort` may take about 0.00095 seconds, only 1 order of magnitude greater. But if we scale this up to an input of 1,000,000 it may take hours for `selection sort` while taking only 1 second for `merge sort`. 
+
+This is due to the quadratic nature of the algorithms runtime growth rate. Let's look at the most basic quadratic function:
+
+f(n) = n^2
+
+If we set n = 2, then f(2) = 4. If you increase by a magnitude of 10x then f(2*10) = 400. 
+
+![linear vs quadratic](/images/m6_linear_vs_quadratic.png)
+
+Quadratic growth is fine for small input sizes but it quickly gets worse.
 
 ### Worst Case Hypothesis for Selection Sort
 
+For `linear sort` the worst case was having the target at the end of the array. But what about for `selection sort`?
+
 ### Quadratic Time (or Why is Selection Sort Slow?)
 
+Regardless of the order being reversed, presorted, or anything else, `selection sort` will actually always exhibit quadratic growth.
+
+![selection sort reverse order input](/images/m6_selection_sort_reverse_order_input.png)
+
+![selection sort presorted input](/images/m6_selection_sort_presorted_input.png)
+
+In this example whether pre-sorted or reverse ordered the total number of comparisons are the same at 28.
+
+C(n) = 1/2 (n^2 - n)
+
 ### Deducing Growth Rates From Code
+
+```java
+public static int linearSearch(Comparable target, Comparable[] list) {
+    int index = 0;
+    while (index < list.length) {
+        if (list[index].compareTo(target) == 0)
+            return index;
+        else
+            index++;
+    }
+    return -1;
+}
+```
+
+Note: `list.length`
+
+If you see a single loop whose limit depends on the size of the input we can expect linear runtime growth.
+
+```java
+public static void selectionSort (Comparable[] list) {
+    int minIndex;
+    Comparable nextSmallest;
+
+    for (int unSortedStart = 0; unSortedStart < list.length-1; unSortedStart++) {
+        minIndex = unSortedStart;
+        for (int currentIndex = unSortedStart+1; currentIndex < list.length; currentIndex++) {
+            if (list[currentIndex].compareTo(list[minIndex]) < 0) {
+                minIndex = currentIndex;
+            }
+        }
+
+        nextSmallest = list[minIndex];
+        list[minIndex] = list[unSortedStart];
+        list[unSortedStart] = nextSmallest;
+    }
+}
+```
+
+Note:
+
+`list.length-1`
+
+`list.length`
+
+If you see code nested within two for loops and both have limits based on n we can expect worst case quadratic growth.
 
 ### Revisiting the Worst Case Hypothesis for Selection Sort
 

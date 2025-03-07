@@ -50,11 +50,11 @@ Equality Operators:
 * `==`
 * `!=`
 
-If the if statement is false the program continues to run just not the 
+If the if statement is false the program continues to run just not the statement inside the brackets.
 
 ### Comparing Non-numeric Data
 
-You can also compare `char` viat he Unicode value. Values increase from 0 to 9 and through various symbols. Then continuing with 1st uppercase alphabet then lower case alphabet with 0 = 48 and z = 122.
+You can also compare `char` via the Unicode value. Values increase from 0 to 9 and through various symbols. Then continuing with 1st uppercase alphabet then lower case alphabet with 0 = 48 and z = 122.
 
 ### The equals Method
 
@@ -171,7 +171,7 @@ else {
 
 ### Logical Operators
 
-In our previous example extremely hot temperatures would will result in the program telling us to go to the park. So perhaps we also want an extra requirement.
+In our previous example extremely hot temperatures will result in the program telling us to go to the park. So perhaps we also want an extra requirement.
 
 Logical Operators:
 |Name|Symbol|
@@ -308,7 +308,7 @@ if ((fahrenheit >= MIN_PARK_TEMP) && (fahrenheit <= MAX_PARK_TEMP)) {
 ### The Dangling Else Problem
 
 ```java
-public class DnaglingElse {
+public class DanglingElse {
     public static void main(String[] args) {
         int num = 9;
         if (num > 0);
@@ -436,7 +436,7 @@ public class SwitchTest {
 
 ## Iteration
 
-**Iteration** is the concept which involves looping over a bloack of code until some condition is false.
+**Iteration** is the concept which involves looping over a block of code until some condition is false.
 
 We will touch on:
 * while statements

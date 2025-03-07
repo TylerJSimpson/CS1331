@@ -196,7 +196,7 @@ public static void main(String[] args) {
 
 }
 ```
-Notice that `String[] args` s referencing a string object array.
+Notice that `String[] args` is referencing a string object array.
 
 This array of string objects works to grab any arguments passed to the program from the command line at runtime.
 
@@ -457,7 +457,7 @@ public static boolean searchArray(String target, String[] array)
 public static boolean searchArray(int target, int[] array)
 ```
 
-Java understands what to call when compiling a call to an overloaded method. It exames the parameter list and searches for a method with a matching signature. This means at runtime Java already knows what it is going to do in this case.
+Java understands what to call when compiling a call to an overloaded method. It examines the parameter list and searches for a method with a matching signature. This means at runtime Java already knows what it is going to do in this case.
 
 What if we call an overloaded method with a signature with a type that is not supported?
 
