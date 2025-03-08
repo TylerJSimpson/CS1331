@@ -1,5 +1,19 @@
 public class TestAlgorithms {
 
+    public static void insertionSort(int[] list) {
+        for (int unsortedStart = 1; unsortedStart < list.length; unsortedStart++) {
+            int nextInsert = list[unsortedStart];
+            int currentIndex = unsortedStart -1;
+
+            while (currentIndex >= 0 && list[currentIndex] > nextInsert) {
+                list[currentIndex+1] = list[currentIndex];
+                currentIndex--;
+            }
+
+            list[currentIndex+1] = nextInsert;
+        }
+    }
+
     public static void selectionSort(int[] list) {
         int minIndex; // Keep track of minimum index
         int nextSmallest; // Temporary variable used to perform swaps

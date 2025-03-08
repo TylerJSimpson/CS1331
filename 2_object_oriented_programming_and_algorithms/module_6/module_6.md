@@ -708,13 +708,129 @@ If you see code nested within two for loops and both have limits based on n we c
 
 ### Revisiting the Worst Case Hypothesis for Selection Sort
 
+```java
+    public static void selectionSort (Comparable[] list) {
+        int minIndex;
+        Comparable nextSmallest;
+
+        for (int unSortedStart = 0; unSortedStart < list.length-1; unSortedStart++) {
+            minIndex = unSortedStart;
+            for (int currentIndex = unSortedStart+1; currentIndex < list.length; currentIndex++) {
+                if (list[currentIndex].compareTo(list[minIndex]) < 0) {
+                    minIndex = currentIndex;
+                }
+            }
+            nextSmallest = list[minIndex];
+            list[minIndex] = list[unSortedStart];
+            list[unSortedStart] = nextSmallest;
+        }
+    }
+```
+
+The last 3 lines of code are executing swaps on every iteration of the loop which needs to be factored into the time complexity. But, if the list is pre-sorted then this won't be necessary.
+
+```java
+    public static void selectionSort (Comparable[] list) {
+        int minIndex;
+        Comparable nextSmallest;
+
+        for (int unSortedStart = 0; unSortedStart < list.length-1; unSortedStart++) {
+            minIndex = unSortedStart;
+            for (int currentIndex = unSortedStart+1; currentIndex < list.length; currentIndex++) {
+                if (list[currentIndex].compareTo(list[minIndex]) < 0) {
+                    minIndex = currentIndex;
+                }
+            }
+
+            if (minIndex != unSortedStart) {
+                nextSmallest = list[minIndex];
+                list[minIndex] = list[unSortedStart];
+                list[unSortedStart] = nextSmallest;
+            }
+        }
+    }
+```
+
 ### The Insertion Sort Algorithm
+
+Insertion sort starts by splitting the array into 2 lists. The left list is sorted and the right is unsorted. It picks just the 1st element to start the sorted list.
+
+{9,6,3,2,1}
+
+sorted  
+{9} -> {6,9}
+
+unsorted  
+{6,3,2,1} -> {3,2,1}
+
+The comparison happens for the last object in the array so next 3 would be compared with 9 then 6.
+
+![](/images/m6_insertion_sort_comparisons.PNG)
+
+Notice the triangle pattern in the Comparisons column. 
+
+C(n) = 1/2(n^2 -n)
+
+Insertion sort's worst case scenario is a reverse ordered list while it's best case scenario is a pre-sorted list.
+
+There is no shifting and only 1 comparison per iteration in a best case scenario.
+
+C(n) = n-1
+
 
 ### Insertion Sort Implementation
 
+```java
+public static void insertionSort(int[] list) {
+    for (int unsortedStart = 1; unsortedStart < list.length; unsortedStart++) {
+        int nextInsert = list[unsortedStart];
+        int currentIndex = unsortedStart -1;
+
+        while (currentIndex >= 0 && list[currentIndex] > nextInsert) {
+            list[currentIndex+1] = list[currentIndex];
+            currentIndex--;
+        }
+
+        list[currentIndex+1] = nextInsert;
+    }
+}
+```
+
 ### Linearithmic Time
 
+Let's review `linearithmic` time and why `merge sort` is so fast. 
+
+linearithmic function:  
+n*log(n)
+
+![](/images/m6_linearithmic_vs_quadratic_time.png)
+
+Revising the merge layers you can see 3 comparisons or log2(8) = 3.
+
+![](/images/m6_merge_layers.png)
+
 ### Growth Rates and Big-O Notation
+
+We have reviewed 4 types of runtime growth rates:
+
+- **constant** - with getFront()
+- **linear** - with linear search (worst case) and insertion sort (best case)
+- **linearithmic** - with merge sort
+- **quadratic** - with selection sort and insertion sort (worst case)
+
+These are the 7 common growth rates:
+
+|Growth Rate|Big-O Notation|
+|-----------|--------------|
+|constant|O(1)|
+|logarithmic|O(log(n))|
+|linear|O(n)|
+|linearithmic|O(nlog(n))|
+|quadratic|O(n^2)|
+|cubic|O(n^3)|
+|exponential|O(a^n)|
+
+
 
 ### The Binary Search Algorithm
 
