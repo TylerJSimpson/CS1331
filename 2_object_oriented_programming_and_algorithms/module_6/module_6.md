@@ -830,11 +830,83 @@ These are the 7 common growth rates:
 |cubic|O(n^3)|
 |exponential|O(a^n)|
 
+![](/images/m6_big_o_curves_1.png)
 
+![](/images/m6_big_o_curves_2.png)
+
+We can see O(log(n)) performs very well. One famous example of an algorithm with big O(log(n)) is the binary search algorithm.
 
 ### The Binary Search Algorithm
 
+Imagine searching for a term in a dictionary. When you open the dictionary you can quickly see if the word you are looking for is going to be higher or lower in page number. This is because the data is pre-sorted which is also a requirement of the binary search algorithm.
+
+Steps:
+1. Find the middle element of the list
+2. Compare that middle element's value to that of the target item
+3. If their values are equal, the target is found. Terminate
+4. If the target items is greater than the middle element, perform steps 1-3 on the right sublist.
+5. If the target item is less than the middle element perform steps 1-3 on the left sublist.
+6. Repeat the above until the target is found in step 3 or the aglorithm reaches a single element sublist
+7. If the single element is not the target, the target is not in the list. Terminate
+
+Example:
+
+We have a target of **13**
+
+2 3 5 6 7 10 11 13
+
+Because the middle has 2 elements we pick one arbitrarily.
+
+2 3 5 6 **7** 10 11 13
+
+We ignore everything left of 7 since our target is larger.
+
+10 **11** 13
+
+Again we choose the middle, 11. Since this is smaller we choose the elements to the right.
+
+**13**.
+
 ### Binary Search Implementation
+```java
+public static int binarySearch(Comparable[] list, Comparable target) {
+    int start = 0, end = list.length -1, mid = 0;
+
+    while (start <= end) {
+        mid = (start + end) / 2;
+        if (list[mid].compareTo(target) == 0)
+            return mid;
+        else if (target.compareTo(list[mid]) < 0)
+            end = mid - 1;
+        else 
+            start = mid + 1;
+    }
+
+    return -1;
+}
+```
+
+1st we start at 0, set the end to the length of the array and we set middle to 0 but it will be set to the actual middle indexes in the code.
+
+2nd the while statement handles splits. As long as the start hasn't reached the end it continues. The code then finds the middle. Then the code checks if the middle matches the target. If not, then it determines if it should explore the left or right side based on comparing the target and the mid.
 
 ### Logarithmic Complexity
 
+Just like linear search, binary search runs at constant time in its best case O(1). The worst-case runtime growth of binary search, however, is logarithmic or O(log2(n)) when it must reach the maximum comparisons to tell if an element exists or not. 
+
+|n|log2(n)|
+|-|-------|
+|1|0|
+|2|1|
+|4|2|
+|8|3|
+|16|4|
+|32|5|
+|64|6|
+|128|7|
+|256|8|
+|512|9|
+|1024|10|
+|1048576|20|
+
+This shows binary search has a ceiling of 20 comparisons to find a target in any sorted 1,048,576 element long list whiel linear search's ceiling is 1,048,576!
