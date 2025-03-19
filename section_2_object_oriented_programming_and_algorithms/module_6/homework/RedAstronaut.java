@@ -66,20 +66,63 @@ public class RedAstronaut extends Player implements Impostor{
 
     }
 
-    public void freeze() {
+    public void freeze(Player p) {
         System.out.println("test");
+
+        // Cannot freeze if you are frozen and cannot freeze another imposter or someone who is already frozen
+        if (this.isFrozen() || p.isFrozen() || p instanceof RedAstronaut) {
+            return;
+        }
+
+        // If RedAstronaut's SusLevel < Player's then it is successful otherwise susLevel x 2
+        if (this.getSusLevel() < p.getSusLevel()) {
+            p.setFrozen(true);
+        } else {
+            this.setSusLevel(getSusLevel() * 2);
+        }
+
+        // Check if game is over
+        gameOver();
     }
 
-    public void sabotage() {
-        System.out.println("test");
+    public void sabotage(Player p) {
+        // Cannot sabotage another impostor, cannot sabotage if you are frozen, cannot sabotage a frozen player
+        if (p.isFrozen() || this.isFrozen() || p instanceof RedAstronaut) {
+            return;
+        }
+
+        // If Impostor's susLevel < 20 increase Crewmate's susLevel by 50%, otherwise 25% rounding down
+        if (this.getSusLevel() < 20) {
+            p.setSusLevel((int)(p.getSusLevel() + Math.floor(p.getSusLevel() * 0.5)));
+        } else {
+            p.setSusLevel((int)(p.getSusLevel() + Math.floor(p.getSusLevel() * 0.25)));
+        }
     }
 
-    public void equals() {
-        System.out.println("test");
+    public boolean equals(Object o) {
+        // Check if object is a RedAsatronaut then use parent class equals to check name, frozen, and susLevel
+        // Then separately check if skills match
+        if (o instanceof RedAstronaut) {
+            RedAstronaut redAstronaut = (RedAstronaut) o;
+            return super.equals(o) && this.skill.equals(redAstronaut.skill);
+        }
+        return false;
     }
 
     public String toString() {
-        return ("Test");
+
+        // Get the base string from the parent Player class
+        String baseString = super.toString();
+        
+        // Add the RedAstronaut-specific information
+        String returnString = baseString + ". I am an " + this.skill + " player!";
+        
+        // Apply uppercase if susLevel > 15
+        if (this.getSusLevel() > 15) {
+            return returnString.toUpperCase();
+        } else {
+            return returnString;   
+        }
     }
 
     /* HELPERS */
