@@ -1,13 +1,12 @@
 import java.util.Arrays;
 import java.util.Collections;
 
-public class RedAstronaut extends Player implements Impostor{
+public class RedAstronaut extends Player implements Impostor {
     
     /* VARIABLES */
     private String skill;
 
     /* CONSTRUCTOR */
-
     public RedAstronaut(String name) {
         super(name, 15);
         this.skill = "experienced";
@@ -15,7 +14,14 @@ public class RedAstronaut extends Player implements Impostor{
 
     public RedAstronaut(String name, int susLevel, String skill) {
         super(name, susLevel);
-        this.skill = validateSkills(skill);
+        
+        // Validate skill directly in the constructor
+        String lowerSkill = skill.toLowerCase();
+        if (lowerSkill.equals("inexperienced") || lowerSkill.equals("experienced") || lowerSkill.equals("expert")) {
+            this.skill = lowerSkill;
+        } else {
+            this.skill = "experienced";
+        }
     }
 
     /* METHODS */
@@ -63,8 +69,6 @@ public class RedAstronaut extends Player implements Impostor{
     }
 
     public void freeze(Player p) {
-        System.out.println("test");
-
         // Cannot freeze if you are frozen and cannot freeze another imposter or someone who is already frozen
         if (this.isFrozen() || p.isFrozen() || p instanceof RedAstronaut) {
             return;
@@ -96,7 +100,7 @@ public class RedAstronaut extends Player implements Impostor{
     }
 
     public boolean equals(Object o) {
-        // Check if object is a RedAsatronaut then use parent class equals to check name, frozen, and susLevel
+        // Check if object is a RedAstronaut then use parent class equals to check name, frozen, and susLevel
         // Then separately check if skills match
         if (o instanceof RedAstronaut) {
             RedAstronaut redAstronaut = (RedAstronaut) o;
@@ -106,7 +110,6 @@ public class RedAstronaut extends Player implements Impostor{
     }
 
     public String toString() {
-
         // Get the base string from the parent Player class
         String baseString = super.toString();
         
@@ -121,25 +124,8 @@ public class RedAstronaut extends Player implements Impostor{
         }
     }
 
-    /* HELPERS */
-
-    private String validateSkills(String skill) {
-        String lowerSkill = skill.toLowerCase();
-
-        if (lowerSkill.equals("inexperienced") || lowerSkill.equals("experienced") || lowerSkill.equals("expert")) {
-            return lowerSkill;
-        } else {
-            return "experienced";
-        }
-    }
-
     /* GETTERS */
-
-    /* SETTERS */
-
-    /* TESTING */
-
-    public static void main(String[] args) {
-        System.out.println("test");
+    public String getSkill() {
+        return skill;
     }
 }

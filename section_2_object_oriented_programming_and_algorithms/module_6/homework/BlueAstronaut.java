@@ -1,16 +1,13 @@
 import java.util.Arrays;
 import java.util.Collections;
 
-public class BlueAstronaut extends Player implements Crewmate{
+public class BlueAstronaut extends Player implements Crewmate {
     
     /* VARIABLES */
-    
     private int numTasks;
     private int taskSpeed;
-    private int timesTasksCompleted;
 
     /* CONSTRUCTOR */
-
     public BlueAstronaut(String name) {
         super(name, 15);
         this.numTasks = 6;
@@ -24,7 +21,6 @@ public class BlueAstronaut extends Player implements Crewmate{
     }
 
     /* METHODS */
-
     public void emergencyMeeting() {
         // Only players that are not frozen can call a meeting
         if (this.isFrozen()) {
@@ -63,7 +59,7 @@ public class BlueAstronaut extends Player implements Crewmate{
         // Check if the game is over
         this.gameOver();
     }
-    
+
     public void completeTask() {
         // Frozen BlueAstronaut cannot complete tasks
         if (this.isFrozen()) {
@@ -92,14 +88,39 @@ public class BlueAstronaut extends Player implements Crewmate{
         }
     }
 
-    /* GETTERS */
-
-    /* SETTERS */
-
-    /* TESTING */
-
-    public static void main(String[] args) {
-        System.out.println("test");
+    public boolean equals(Object o) {
+        // Check if object is a BlueAstronaut then use parent class equals to check name, frozen, and susLevel
+        // Then separately check if numTasks and taskSpeed match
+        if (o instanceof BlueAstronaut) {
+            BlueAstronaut blueAstronaut = (BlueAstronaut) o;
+            return super.equals(o) && 
+                   this.numTasks == blueAstronaut.numTasks && 
+                   this.taskSpeed == blueAstronaut.taskSpeed;
+        }
+        return false;
     }
 
+    public String toString() {
+        // Get the base string from the parent Player class
+        String baseString = super.toString();
+        
+        // Add the BlueAstronaut-specific information with the correct format
+        String returnString = baseString + ". I have " + this.numTasks + " leftover.";
+        
+        // Apply uppercase if susLevel > 15
+        if (this.getSusLevel() > 15) {
+            return returnString.toUpperCase();
+        } else {
+            return returnString;   
+        }
+    }
+
+    /* GETTERS */
+    public int getNumTasks() {
+        return numTasks;
+    }
+
+    public int getTaskSpeed() {
+        return taskSpeed;
+    }
 }
