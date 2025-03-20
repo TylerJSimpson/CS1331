@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.Collections;
+
 public class RedAstronaut extends Player implements Impostor{
     
     /* VARIABLES */
@@ -18,52 +21,45 @@ public class RedAstronaut extends Player implements Impostor{
     /* METHODS */
     @Override
     public void emergencyMeeting() {
-
-        // Only consider Players that are not frozen
+        // Only unfrozen players can call a meeting
         if (this.isFrozen()) {
             return;
         }
-
+    
         // Get array of all players
         Player[] allPlayers = Player.getPlayers();
-
-        // Variables
+        
+        // Create a copy of the players array and sort it by susLevel (descending)
+        Player[] sortedPlayers = allPlayers.clone();
+        Arrays.sort(sortedPlayers, Collections.reverseOrder());
+        
+        // Check the top players for tie and frozen status
         Player mostSuspicious = null;
-        boolean isTie = false;
-
-        // Loop thru all players
-        for (Player player : allPlayers) {
-            // Skip player calling the meeting and already frozen players
+        for (Player player : sortedPlayers) {
+            // Skip the player calling the meeting and already frozen players
             if (player == this || player.isFrozen()) {
                 continue;
             }
-
-            // Set mostSuspicious to 1st player so far
+            
             if (mostSuspicious == null) {
                 mostSuspicious = player;
-                continue;
-            }
-
-            // Compare current player to mostSuspicious
-            int comparisonResult = player.compareTo(mostSuspicious);
-
-            // If positive int result then player is now mostSuspicious, if equal then tie
-            if (comparisonResult > 0) {
-                mostSuspicious = player;
-                isTie = false;
-            } else if (comparisonResult == 0) {
-                isTie = true;
+            } else if (player.getSusLevel() == mostSuspicious.getSusLevel()) {
+                // Tie found - don't vote anyone off
+                mostSuspicious = null;
+                break;
+            } else {
+                // We've found our most suspicious unfrozen player
+                break;
             }
         }
-
+        
         // Freeze player if they are the most suspicious and no tie
-        if (mostSuspicious != null && !isTie) {
+        if (mostSuspicious != null) {
             mostSuspicious.setFrozen(true);
         }
-
+        
         // Check if game is over
-        gameOver();
-
+        this.gameOver();
     }
 
     public void freeze(Player p) {
@@ -82,7 +78,7 @@ public class RedAstronaut extends Player implements Impostor{
         }
 
         // Check if game is over
-        gameOver();
+        this.gameOver();
     }
 
     public void sabotage(Player p) {
