@@ -7,14 +7,11 @@
     5. [Interface Hierarchies with a Taste of More UML](#interface-hierarchies-with-a-taste-of-more-uml)
 2. [Polymorphism]
     1. [Introduction to Polymorphism](#introduction-to-polymorphism)
-    2. [Revisiting "Motivating Interfaces"](#revisiting-motivating-interfaces)
-    3. [Revisting "Interface Basics"](#revisting-interface-basics)
-    4. [A Simple Example](#a-simple-example)
-    5. [Legal Assignments](#legal-assignments)
-    6. [Method Calls (at Compile Time)](#method-calls-at-compile-time)
-    7. [Casting (at Compile Time)](#casting-at-compile-time)
-    8. [Casting (at Runtime)](#casting-at-runtime)
-    9. [Dynamic Binding](#dynamic-binding)
+    2. [A Simple Example](#a-simple-example)
+    3. [Legal Assignments](#legal-assignments)
+    4. [Method Calls (at Compile Time)](#method-calls-at-compile-time)
+    5. [Casting (at Compile Time)](#casting-at-compile-time)
+    6. [Dynamic Binding](#dynamic-binding)
 
 ## More About Interfaces
 
@@ -243,20 +240,184 @@ The dashed lines represent dependencies. For example remember our craps game we 
 
 ## Polymorphism
 
+We know java objects can be **polymorphic** as they exist in different forms. We have also seen that objects can be referred to by an interface-typed variable as long as the object's class or ancestor implements the interface.
+
 ### Introduction to Polymorphism
 
-### Revisiting "Motivating Interfaces"
+Until recently the objects we've created and the reference variables declared to interact with them hae been of the same types.
 
-### Revisting "Interface Basics"
+```java
+Scanner input = new Scanner(System.in);
+```
+
+Here the declaration of the variable `input` and the instantiation of the object are both `Scanner`.
+
+We have seen a variable with a type that is a superclass of the actual class and with interfaces we have seen that an object can be referred to by an interface-typed variable as long as the object's class or ancestor implements the interface.
 
 ### A Simple Example
 
+```java
+Canine pixy;
+pixy = new Poodle(...);
+pixy.bark();
+```
+
+**The object type is the actual class that follows the new operator when an object is instantiated.**
+
 ### Legal Assignments
+
+*Can an object of some class be legally assigned to a reference variable fo some declared type?*
+
+Java compiler sees `Poodle` on the right and `Canine` on the left and it asks is a `Poodle` a `Canine`? Which is true so it passes and compiles.
+
+```java
+Canine pixy;
+Poodle richie = new Poodle(...)
+pixy = richie;
+pixy.bark()
+```
+
+The same thing happens as above and the code compiles.
+
+You can replace `Canine` with `Dog` and the code would also compile.
+
+```java
+Dog pixy;
+pixy = new Poodle(...);
+pixy.bark();
+```
+
+This is because a `Poodle` is a `Dog`.
+
+If you replace `Dog` and `Poodle`:
+
+```java
+Poodle pixy;
+pixy = new Dog(...);
+pixy.bark();
+```
+
+Then you will receve an error incompatible types, `Dog` cannot be converted to `Poodle`.
+
+Say you have the following:
+
+```java
+Human owner = new Human();
+Dog richie = new Dog(...)
+Poodle pixy = new Poodle(...)
+owner.playFetch(richie);
+owner.playFetch(pixy);
+```
+
+As well as:
+
+```java
+public class Human {
+    ...
+
+    public void playFetch(Dog myPet) {
+        ...
+    }
+}
+```
+
+This would compile because `Dog myPet = richie` and `Dog myPet = pixy` and a `Poodle` is a `Dog`.
+
+---
+
+The declared type can also be an interface.
+
+```java
+public interface Groombale {
+    public void groom();
+}
+```
+
+```java
+public class Poodle extends Dog implements Groomable
+```
+
+```java
+public class Car implements Groomable
+```
+
+```java
+Groomable toGroom = new Car(...);
+Groomable toGroom = new Poodle(...);
+```
+
+Both of these will compile because there are groomable types on both sides.
+
+But, this will **not** compile:
+```java
+Car sparky = new Poodle(...)
+```
 
 ### Method Calls (at Compile Time)
 
+*Is every variable and method we try to access with a referece variable available in its declared type?*
+
+The same rules apply to methods and variables.
+
+Say we have `enterDogShow()` as a `Poodle` method. The declared type of Pixy is `Canine` which does not contain `enterDogShow()` so the compile will fail.
+
+```java
+Canine pixy;
+Poodle richie = new Poodle(...)
+pixy = richie;
+pixy.bark();
+pixy.enterDogShow()
+```
+
+This leads to casting.
+
 ### Casting (at Compile Time)
 
-### Casting (at Runtime)
+**Legally we can cast up and down an inheritance tree, as long as the target type has the variable or method being accessed.**
+
+```java
+Canine pixy;
+pixy = new Poodle(...);
+pixy.bark();
+((Poodle)pixy).enterDogShow();
+```
+
+Note that pixy stays a `Canine` reference even after the cast operation. The cast just creates a temporary reference.
+
+You can't just cast up and down without the method or variable being referenced being checked if it exists.
+
+This would fail because Object does not have `enterDogShow()` method:
+
+```java
+((Object)pixy).enterDogShow()
+```
 
 ### Dynamic Binding
+
+Consider the below scenario where both `Canine` and `Poodle` independently define a bark method.
+
+```java
+Canine pixy;  
+pixy = new Poodle(...); 
+pixy.bark();
+```
+
+Canine.java:
+
+```java
+public void bark() {
+    System.out.println("Woof Woof");
+}
+```
+
+Poodle.java
+
+```java
+public void bark() {
+    System.out.println("arf arf");
+}
+```
+
+The `Poodle` version of bark would execute since the object class is `Poodle`. However, if `Poodle` did not define it's own bark method then the JVM would chekc up the inheritance tree until it finds a superclass with a bark definition. 
+
+This process is done **at runtime**.
