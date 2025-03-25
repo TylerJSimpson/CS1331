@@ -109,17 +109,250 @@ It may seem odd that `Error` and `Exception` are separate but this is the curren
 
 ### Handling Exceptions (by catching)
 
+```java
+try {
+ statement(s);
+} catch (ExceptionType identifier) {  
+ statement(s);
+}
+```
+
+When an exception occurs in the try block, a reference to its object is passed into a catch block, only if the declared type matches the object's type.
+
+
 ### Multiple Catch Blocks
+
+```java
+try {
+ statement(s);
+} catch (ExceptionType1 identifier) {  
+ statement(s);
+} catch (ExceptionType2 identifier) {  
+ statement(s);
+} catch (ExceptionType3 identifier) {  
+ statement(s);
+}
+```
+
+It is important to include all of the dependent code in the try block.
+
+Bad example that won't compile:
+
+```java
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a fahrenheit value: ");
+        try {
+            int fahrenheit = input.nextInt();            
+        }
+        catch(InputMismatchException e) {
+            System.out.println("Sorry, that wasn't an int.");
+            System.out.println("Please re-run the program again");
+        }
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.printf("%s Fahrenheit: %d\n", fahrenheit);
+        System.out.printf("%s %-10s: %,.1f\n", celsius);
+    }
+```
+
+Good example:
+
+```java
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a fahrenheit value: ");
+        try {
+            int fahrenheit = input.nextInt();
+            double celsius = (5.0/9) * (fahrenheit - 32);
+            System.out.printf("%s Fahrenheit: %d\n", fahrenheit);
+            System.out.printf("%s %-10s: %,.1f\n", celsius);
+        }
+        catch(InputMismatchException e) {
+            System.out.println("Sorry, that wasn't an int.");
+            System.out.println("Please re-run the program again");
+        }
+    }
+```
 
 ### Exception Controlled Loops
 
+```java
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        boolean success = false;
+        int fahrenheit = 0;
+
+        while (!success) {
+            try {
+                System.out.print("Enter a fahrenheit value: ");
+                fahrenheit = input.nextInt();
+                success = true;
+
+            }
+            catch(InputMismatchException e) {
+                input.nextLine();
+                System.out.println("Sorry, that wasn't an int.");
+                System.out.println("Please try again");
+            }
+        }
+        
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.printf("Fahrenheit: %d\n", fahrenheit);
+        System.out.printf("Celsius: %,.1f\n", celsius);
+
+    }
+```
+
+Here we have the dependent code outside of the block but this is okay due to the success variable.
+
 ### Why Exceptions?
+
+There are cases such as `nextInt()` where you may think that the "exception" is being handled for us. This is true but the code is much easier to read and write when you have a separation in the error handling code and the core logic.
 
 ### Handling Multiple Exceptions
 
+You ahve to be careful when catching multiple exceptions.
+
+For example in the case below Exception e already captures **ALL** exceptions so the InputMismatchException and ArithmeticException are never touched. **Execution never returns to a particular try block after it throws an exception.**
+
+```java
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a fahrenheit value: ");
+        try {
+            int fahrenheit = input.nextInt();
+            double celsius = (5.0/9) * (fahrenheit - 32);
+            System.out.printf("%s Fahrenheit: %d\n", fahrenheit);
+            System.out.printf("%s %-10s: %,.1f\n", celsius);
+            double x = 1331/fahrenheit;
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+        catch(InputMismatchException ime) {
+            System.out.println("Sorry, that wasn't an int.");
+            System.out.println("Please re-run the program again");
+        }
+        catch(ArithmeticException ae) {
+            System.out.println("You entered an invalid number:");
+            System.out.println("ae.getMessage()");
+        }
+    }
+```
+
+Here is the correct ordering:
+
+```java
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a fahrenheit value: ");
+        try {
+            int fahrenheit = input.nextInt();
+            double celsius = (5.0/9) * (fahrenheit - 32);
+            System.out.printf("Fahrenheit: %d\n", fahrenheit);
+            System.out.printf("Celsius: %,.1f\n", celsius);
+            double x = 1331/fahrenheit;
+        }
+        catch(InputMismatchException ime) {
+            System.out.println("Sorry, that wasn't an int.");
+            System.out.println("Please re-run the program again");
+        }
+        catch(ArithmeticException ae) {
+            System.out.println("You entered an invalid number:");
+            System.out.println("ae.getMessage()");
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+```
+
+You can `getMessage()` and `printStackTrace()` and others.
+
 ### Combined Catch Blocks
 
+In version 7 of Java and beyond you can combine multiple catch blocks into 1.
+
+```java
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a fahrenheit value: ");
+        try {
+            int fahrenheit = input.nextInt();
+            double celsius = (5.0/9) * (fahrenheit - 32);
+            System.out.printf("Fahrenheit: %d\n", fahrenheit);
+            System.out.printf("Celsius: %,.1f\n", celsius);
+            double x = 1331/fahrenheit;
+        }
+        catch(InputMismatchException | ArithmeticException e) {
+            System.out.println("Sorry, that wasn't an valid value.");
+            System.out.println("Please re-run the program again");
+        }
+    }
+```
+
 ### The finally Block
+
+The finally block contains statements that must execute regardless if the try exectutes or not. Commonly this is used for cleanup code.
+
+Below the nextLine() would fit this use case.
+
+```java
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        boolean success = false;
+        int fahrenheit = 0;
+
+        while (!success) {
+            try {
+                System.out.print("Enter a fahrenheit value: ");
+                fahrenheit = input.nextInt();
+                success = true;
+
+            }
+            catch(InputMismatchException e) {
+                input.nextLine();
+                System.out.println("Sorry, that wasn't an int.");
+                System.out.println("Please try again");
+            }
+        }
+        
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.printf("Fahrenheit: %d\n", fahrenheit);
+        System.out.printf("Celsius: %,.1f\n", celsius);
+
+    }
+```
+
+For example:
+
+```java
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        boolean success = false;
+        int fahrenheit = 0;
+
+        while (!success) {
+            try {
+                System.out.print("Enter a fahrenheit value: ");
+                fahrenheit = input.nextInt();
+                success = true;
+            }
+            catch(InputMismatchException e) {
+                System.out.println("Sorry, that wasn't an int.");
+                System.out.println("Please try again");
+            }
+            finally {
+                input.nextLine();
+            }
+        }
+        System.out.print("Enter a day of the week: ");
+        String day = input.nextLine();
+        double celsius = (5.0/9) * (fahrenheit - 32);
+        System.out.printf("%s Fahrenheit: %d\n", day, fahrenheit);
+        System.out.printf("%s Celsius: %,.1f\n", day, celsius);
+    }
+```
 
 ### File I/O (and the FileNotFoundException)
 
