@@ -356,11 +356,300 @@ For example:
 
 ### File I/O (and the FileNotFoundException)
 
+Below you see a program that takes in file name and word to search for i.e. `java FileTest Test.txt We` would run the program with the Test.txt file as the input file and searches for the word "We". Whether or not the word exists it outputs a file with a name including the lines with the word we are searching for. 
+
+```java
+    public static void main(String[] args) {
+        String inputFileName = args[0];
+        String word = args[1];
+
+        File fileIn = new File(inputFileName);
+        File fileOut = new File(word+"In"+inputFileName);
+
+        Scanner fileScan = null;
+        PrintWriter filePrint = null;
+
+        try {
+            fileScan = new Scanner(fileIn);
+            filePrint = new PrintWriter(fileOut);
+
+            int LineCount = 0;
+            filePrint.printf("Lines in %s containing %s: \n", args[0], args[1]);
+
+            while (fileScan.hasNextLine()) {
+                String Line = fileScan.nextLine();
+                if (Line.contains(word)) {
+                    filePrint.println(LineCount + ": " + Line);
+                }
+                LineCount++;
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        finally {
+            if (fileScan != null) {
+                fileScan.close();
+            }
+            if (filePrint != null) {
+                filePrint.close();
+            }
+        }
+
+    }
+```
+
 ### Declaring Exceptions to be Thrown (or Removing the FileNotFoundException catch)
+
+What happens if we remove the try catch and try to compile with the intent of only sending valid files?
+
+```java
+public static void main(String[] args) {
+    String fileName = args[0];
+    String word = args[1];
+
+    File file = new File(args[0]);
+    Scanner scan = null;
+
+    scan = new Scanner(File);
+    int lineCount = 0;
+    System.out.printf("Lines in %s containing %s: \n", args[0], args[1]);
+
+    while (scan.hasNextLine()) {
+        String line = scan.nextLine();
+        if (line.contains(word)) {
+            System.out.println(lineCount + ": " + line);
+        }
+        lineCount++;
+    }
+    scan.close();
+}
+```
+
+Because the code can throw an exception we can't compile it without some code to handle it. This can be done using `throws FileNotFoundException to the method header.
+
+```java
+public static void main(String[] args) throws FileNotFoundException{
+```
 
 ### Checked vs Unchecked Exceptions
 
+![](/images/m8_throwable_hierarchy.png)
+
+Recall `Exception` has a subclass `RuntimeException`. Exceptions under `RuntimeException` are called **unchecked exceptions** because checking for them would be cumbersome. I.e. checking for null pointer exceptions every time we use a reference variable. Everything outside `RuntimeException` hierarchyt are the **checked exceptions** that we must either catch or specify.
+
 ### Defining an Exception and using the throw operator
+
+We can write our own exceptions by extending the `Exception` class or any of it's descendants.
+
+Rememver `ArithmeticException` is a descendant of `RuntimeException` so generally it is unchecked so we can specify to check it. Further, this allows us to custome the message when we use `getMessage`.
+
+```java
+public class DivideByZeroException extends ArithmeticException {
+    public DivideByZeroException() {
+        super("Divide by zero.");
+    }
+}
+```
+
+An example throwing and catching the error:
+
+```java
+import java.util.Scanner;
+import java.util. InputMismatchException;
+
+public class FahrenheitToCelsiusExceptions {
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a Fahrenheit value: ");
+        try {
+            int fahrenheit = input.nextInt();
+            double celsius = (5.0/9) * (fahrenheit - 32);
+            System.out.printf("Fahrenheit: %d\n", fahrenheit);
+            System.out.printf("Celsius:    %.1f\n", celsius);
+            if (fahrenheit == 0) {
+                throw new DivideByZeroException();
+            }
+            double x = 1331/fahrenheit;
+        }
+        catch(InputMismatchException ime) {
+            System.out.println("Sorry, that wasn't an int.");
+            System.out.println("Please re-run the program again");
+        }
+        catch(DivideByZeroException dze) {
+            System.out.println("Oops. You entered an invalid number:");
+            System.out.println(dze.getMessage());
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
 
 ### More File I/O: Delimited Files
 
+Recall previously when we did a terminal output for creating a `Wolf` pack.
+
+```java
+public static void main(String[] args) {
+    Wolf[] pack = {
+        new Wolf(17.1, 2),
+        new Wolf(3, 10),
+        new Wolf(9.2, 7),
+        new Wolf(9.1, 8),
+        new Wolf(17.01, 3),
+        new Wolf(16.2, 1),
+        new Wolf(16, 4),
+        new Wolf(16, 5),
+        new Wolf(10, 6),
+        new Wolf(5, 9)
+    };
+
+    Arrays.sort(pack);
+
+    File fileOut = new File("SortedWolves.csv");
+    PrintWriter filePrint = null;
+
+    try {
+        filePrint = new PrintWriter(fileOut);
+        for (Wolf wolf : pack) {
+            filePrint.println(wolf.getRank() + "," + wolf.getSize());
+        }
+    } 
+
+    catch (FileNotFoundException e) {
+        System.out.println(e.getMessage());
+    }
+
+
+    finally {
+        if (filePrint != null) {
+            filePrint.close();
+        }
+    }
+}
+```
+
+This improvement in the code now would write each wolf to a line in a CSV.
+
+```
+10,3.0
+9,5.0
+8,9.1
+7,9.2
+6,10.0
+5,16.0
+4,16.0
+3,17.01
+2,17.1
+1,16.2
+```
+
+What if we wanted to find the average size of Wolves in the pack using this csv file?
+
+We previously saw how to read af ile line by line but what if we want to use a delimiter?
+
+```java
+public static void main(String []args) {
+    String chant = "Java Is The Best!";
+    String[] tokens = chant.split(" ");
+    for (String x : tokens) {
+        System.out.println(x);
+    }
+}
+```
+
+```
+Java
+Is
+The
+Best!
+```
+
+Using similar method we split using a `,` instead this time.
+
+```java
+public static void main(String[] args) {
+    File fileIn = new File("SortedWolves.csv");
+    Scanner fileScan = null;
+    String[] tokens = null;
+    double[] allWeights = new double[10];
+    int index = 0;
+    try {
+        fileScan = new Scanner(fileIn);
+        String line = null;
+        while (fileScan.hasNextLine()) {
+            line = fileScan.nextLine();
+            tokens = line.split(",");
+            allWeights[index] = Double.parseDouble(tokens[1]);
+            index++;
+        }
+    } 
+    catch (FileNotFoundException e) {
+        System.out.println(e.getMessage());
+    }
+
+    finally {
+        if (fileScan != null) {
+            fileScan.close();
+        }
+    }
+}
+```
+
+What if we wanted to split a String using uppercase letters as a delimiter that is 26 actual delimiters (A,B,C...Z) and we don't want to call `split()` that many times. Instead you can use RegEx `[A-Z]`.
+
+```java
+public static void main(String []args) {
+    String chant = "Java Is The Best!";
+    String[] tokens = chant.split("[A-Z]+");
+    for (String x : tokens){
+        System.out.println(x);
+    }
+}
+```
+
+```
+ava 
+s 
+he 
+est!
+```
+
+You can also parse delimited strings using Scanner.
+
+```java
+Scanner (String source)
+```
+
+```java
+public static void main(String[] args) {
+    File fileIn = new File("SortedWolves.csv");
+    Scanner fileScan = null;
+    Scanner wolfScan = null;
+    double[] allWeights = new double[10];
+    int index = 0;
+    try {
+        fileScan = new Scanner(fileIn);
+        String line = null;
+        while (fileScan.hasNextLine()) {
+            line = fileScan.nextLine();
+            wolfScan = new Scanner(line);
+            wolfScan.useDelimiter(",");
+            wolfScan.nextInt(); //consume unused rank token
+            allWeights[index] = wolfScan.nextDouble();
+            index++;
+        }
+    } 
+    catch (FileNotFoundException e) {
+        System.out.println(e.getMessage());
+    }
+    finally {
+        if (fileScan != null) {
+            fileScan.close();
+        }
+    }
+}
+```
+
+We had to specify the delimiter here because otherwise the default is whitespace.
