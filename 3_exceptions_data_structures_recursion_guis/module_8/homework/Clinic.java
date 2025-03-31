@@ -89,14 +89,16 @@ public class Clinic {
             }
 
             // Get pain level information 
+            System.out.println("On a scale of 1 to 10, how much pain is " + name + " in right now?");
             int painLevel = 0;
             boolean validPain = false;
             while (!validPain) {
+                String input = userInput.nextLine();
                 try {
-                    painLevel = Integer.parseInt(userInput.nextLine());
+                    painLevel = Integer.parseInt(input);
                     validPain = true;
                 } catch (NumberFormatException e) {
-                    System.out.println("Please enter a valid number for pain level:");
+                    System.out.println("Please enter a number");
                 }
             }
 
@@ -120,7 +122,7 @@ public class Clinic {
 
             // Build patientInfo string
             if (!patientInfo.isEmpty()) {
-                patientInfo += " ";
+                patientInfo += "\n";  // Using newline as separator
             }
 
             // Format patientInfo
@@ -148,12 +150,85 @@ public class Clinic {
     }
 
     public boolean addToFile(String patientInfo) {
-
+        try {
+            // Parse the new patient info
+            String[] newPatientData = patientInfo.split(",");
+            String newName = newPatientData[0];
+            String newSpecies = newPatientData[1];
+            String newAttribute = newPatientData[2]; // DroolRate or MiceCaught
+            String newDay = newPatientData[3];
+            String newEntryTime = newPatientData[4];
+            String newExitTime = newPatientData[5];
+            String newHealth = newPatientData[6];
+            String newPainLevel = newPatientData[7];
+            
+            // Create a temporary list to store the updated file content
+            StringBuilder fileContent = new StringBuilder();
+            boolean patientExists = false;
+            
+            // Try to read the existing file
+            if (patientFile.exists()) {
+                Scanner fileScanner = new Scanner(patientFile);
+                while (fileScanner.hasNextLine()) {
+                    String line = fileScanner.nextLine();
+                    
+                    // Check if this line contains data for our patient
+                    if (line.startsWith(newName + ",")) {
+                        // This is an existing patient
+                        patientExists = true;
+                        
+                        // For existing patients, keep their basic info and add new appointment info
+                        fileContent.append(line).append(",")
+                                 .append(newDay).append(",")
+                                 .append(newEntryTime).append(",")
+                                 .append(newExitTime).append(",")
+                                 .append(newHealth).append(",")
+                                 .append(newPainLevel);
+                    } else {
+                        // This is a different patient, keep their data as is
+                        fileContent.append(line);
+                    }
+                    fileContent.append(System.lineSeparator());
+                }
+                fileScanner.close();
+            }
+            
+            // If this is a new patient, add all their info
+            if (!patientExists) {
+                fileContent.append(patientInfo);
+                fileContent.append(System.lineSeparator());
+            }
+            
+            // Write the updated content back to the file
+            PrintWriter writer = new PrintWriter(patientFile);
+            writer.print(fileContent.toString());
+            writer.close();
+            
+            return true;
+        } catch (Exception e) {
+            // If any error occurs, return false
+            return false;
+        }
     }
 
     private String addTime(String timeIn, int treatmentTime) {
 
+        // Parse the input time in military format
         int time = Integer.parseInt(timeIn);
+
+        // Extract hours and minutes
+        int hours = time / 100;
+        int minutes = time % 100;
+
+        // Convert all to minutes
+        int totalMinutes = hours * 60 + minutes + treatmentTime;
+
+        // Convert back toh ours and minutes
+        int newHours = (totalMinutes / 60) % 24;
+        int newMinutes = (totalMinutes % 60);
+
+        // Format as military time
+        return String.format("%d%02d", newHours, newMinutes);
 
     }
 
