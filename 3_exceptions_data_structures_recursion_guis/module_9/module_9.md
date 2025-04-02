@@ -189,11 +189,88 @@ public class BinCompare<T extends Comparable<T>> {
 
 ### What is a Linked List?
 
+The basis of a linked list is an object called a `Node`. A `Node` is an element of a linked list as opposed to the data being stored directly like an `Array` or `ArrayList`. Nodes are not placed in contiguous memory locations they are essentially just sets of objects floating in the heap. We connect the `Nodes` to create a list. Each `Node` connects to the next hence the name Linked List.
+
+`Node` class
+
+```java
+private class Node<E> {
+    E data;
+    Node<E> next;
+
+    Node(E data, Node<E> next) {
+        this.data = data;
+        this.next = next;
+    }
+}
+```
+
+```java
+new Node<String>(newData, null);
+```
+
+The core operations of a `LinkedList` class is how to get to the actual list. So it will need an instance variable that's a reference to at least 1 `Node`, we can call his `head`. `head` will be `null` if the list is empty.
+
 ### addToFront(), traversal logic
+
+Assuming we have an empty list, we must first create a node.
+
+```java
+head = new Node<E>(data, head);
+```
+
+What if there is already 1 or more nodes?
+
+We can add to the front. This entails using the `addToFront()` method. This method would assign the `next` reference of the new node to the value of the current head of the list. It also needs to ensure the head points to the new node.
+
+```java
+Node current = head;
+while (current != null) {
+    current = current.next;
+}
+```
+
+```java
+    public void addToFront(E newData) {
+        head = new Node<E>(newData, head);
+    }
+```
 
 ### addToRear()
 
+Adding to the rear is a bit more complicated and entails `addToRear()`.
+
+First you create a node
+
+```java
+Node<E> node = new Node <E> (newData, null);
+```
+
+Notice the `next` reference of the new `Node` is initialized to `null`. That's because it is the end of the new list with nothing following it.
+
+To add the node assign it to head:
+
+```java
+public void addToRear(E newData) {
+    public void addToRear(E newData) {
+        Node<E> node = new Node <E> (newData, null);
+        Node<E> current = head;
+        if (head == null) {
+            head = node;
+        } else {
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = node;
+        }
+    }
+}
+```
+
 ### GenericLinkedList and Private Inner Classes
+
+See [GenericLinkedList.java](/3_exceptions_data_structures_recursion_guis/module_9/programs/GenericLinkedList.java) for full code being referenced.
+
 
 ### GenericLinkedList and removing nodes
 
