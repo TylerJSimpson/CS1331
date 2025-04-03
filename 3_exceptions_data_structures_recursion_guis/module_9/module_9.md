@@ -269,12 +269,76 @@ public void addToRear(E newData) {
 
 ### GenericLinkedList and Private Inner Classes
 
-See [GenericLinkedList.java](/3_exceptions_data_structures_recursion_guis/module_9/programs/GenericLinkedList.java) for full code being referenced.
-
+See [GenericLinkedList.java](/3_exceptions_data_structures_recursion_guis/module_9/programs/GenericLinkedList.java) for full code of a generic LinkedList.
 
 ### GenericLinkedList and removing nodes
 
+See [GenericLinkedListUpdated.java](/3_exceptions_data_structures_recursion_guis/module_9/programs/GenericLinkedListUpdate.java) for full code from prior with additional features removing from the front and back of the list.
+
+When removing from the front you simply need to move the head back so `head = head.next;`
+
+```java
+E removeData = head.data;
+head = head.next
+return removedData;
+```
+
+On an empty list this would fail due to null pointer. Below is more robust:
+
+```java
+public E removeFromFront() {
+    if (isEmpty()) {
+        return null;
+    }
+    E removedData = head.data;
+    head = head.next;
+    return removedData;
+}
+```
+
+What about removing from the end of the list?
+
+We don't want to go to the end node since that is what is being removed. We want to move to the 2nd last node and set it's pointer to null to sever the last node.
+
+```java
+Node<E> current = head;
+while (current.next.next != null) {
+    current = current.next;
+}
+E removedData = current.next.data;
+current.next = null;
+return removedData;
+```
+
+We also ahve to realize the code will fail if there is only 1 node due to `current.next.next`.
+
+```java
+public E removeFromRear() {
+    E removedData;
+    is (isEmpty()) {
+        removedData = null;
+    }
+    else if (head.next == null) {
+        removedData = head.data;
+        head = null;
+    }
+    else {
+        Node<E> current = head;
+        while (current.next.next != null) {
+            current = current.next;
+        }
+        removedData = current.next.data;
+        current.next = null;
+    }
+    return removedData;
+}
+```
+
 ### Linked Lists vs ArrayLists
+
+`ArrayLists` do have their benefits. For example they have faster data reads to the ability to access the values directly without intermediate elements.
+
+For example if you want to simply get an item at a specific index this will have constant time with `ArrayLists` but will have linear time in `LinkedLists` due to needing to traverse the list.
 
 ## Recursion
 
