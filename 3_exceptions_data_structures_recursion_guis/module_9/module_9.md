@@ -344,8 +344,109 @@ For example if you want to simply get an item at a specific index this will have
 
 ### Introduction to Recursion
 
+Recursion involves methods calling themselves.
+
+Note that Java does have a limit of how many calls you can put on the stack.
+
+```java
+public class Repeater {
+    public static void main(String[] args) {
+        repeatString("I <3 Java", 3);
+    }
+
+    public static void repeatString(String toRepeat, int times) {
+        if (times <= 0) {
+            return;
+        }
+        System.out.println(toRepeat);
+        repeatString(toRepeat, times -1);
+    }
+}
+
+```
+
 ### Tracing Recursion with the Call Stack
+
+Stack order to maximum size. Then the stack reduces back down to main.
+
+`repeatString("I <3 Java",0)` -> goes on stack but pops based on if statement
+
+`repeatString("I <3 Java",1)`
+
+`repeatString("I <3 Java",2)`
+
+`repeatString("I <3 Java",3)`
+
+`main(null)`
 
 ### Factorial Example
 
+For a recursive method to properly complete we need 3 main things:
+
+* terminating condition (base case) that returns without making a recursive call
+
+* reduction step that moves the direction of the recursive calls towards the terminating condition
+
+* recursive call
+
+Factorials:
+
+```
+n! { 1 ; n = 0 }
+   { n * (n-1)! ; n >= 1 }
+```
+
+When n = 0 then factorial = 1. If n >= 1 then factorial is n times the factorial of n minus 1.
+
+base case: n = 0
+
+reduction step: n - 1
+
+```java
+public static int factorial(int n) {
+    if (n == 0) {
+        return 1;
+    }
+    else {
+        return n * factorial(n-1);
+    }
+}
+```
+
+This works with 0 and positive integers but negatives skip the base case and result in stack overflow.
+
+Here the solution is more robust:
+
+```java
+public static int factorial(int n) {
+    if (n >= 0) {
+        return realFactorial(n);
+    }
+    else {
+        throw new IllegalArgumentException("Non-negative input required");
+    }
+}
+
+private static int realFactorial(int n) {
+    if (n == 0) {
+        return 1;
+    }
+    else {
+        return n * realFactorial(n-1);
+    }
+}
+```
+
 ### The Call Stack and Methods with Return Values
+
+Stack:
+
+`factorial(0)` --> returns 1 but the record is popped 
+
+`factorial(1)`
+
+`factorial(2)`
+
+`factorial(3)`
+
+`main(null)`
