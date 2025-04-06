@@ -80,10 +80,85 @@ public class LinkedList<E> {
         add(size, newData);
     }
 
+    /**
+     * @param o object to search for in linked list
+     * @return boolean true if @param o is in the linked list
+     */
     public boolean contains(Object o) {
-        // May need to write equals method as 1st step
-        // Must be careful with nulls and compare values by equality
+        Node<E> current = head;
+        
+        while (current != null) {
+            if ((o == null && current.data == null) || 
+                (o != null && o.equals(current.data))) {
+                return true;
+            }
+            current = current.next;
+        }
+        return false;
     }
 
+    /**
+     * @param index traverse linked list until arriving at specified index
+     * @return data node at specified index
+     */
+    public E get(int index) {
+        if ((index < 0) || (index >= size)) {
+            throw new IndexOutOfBoundsException();
+        }
 
-}
+        Node<E> current = head;
+
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+        return current.data;
+    }
+
+    /**
+     * @param o element to search for in linked list
+     * @return integer index of object if found otherwise -1
+     */
+    public int indexOf(Object o) {
+
+        int index = 0;
+        Node<E> current = head;
+        
+        while (current != null) {
+            if ((o == null && current.data == null) || 
+                (o != null && o.equals(current.data))) {
+                return index;
+            }
+            current = current.next;
+            index++;
+        }
+        return -1;
+    }
+    
+    public E remove(int index) {
+        if ((index < 0) || (index >= size)) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        E removedData;
+
+        if (index == 0) {
+            removedData = head.data;
+            head = head.next;
+        } else {
+            Node<E> previous = head;
+            for (int i = 0; i < index - 1; i++) {
+                previous = previous.next;
+            }
+            Node<E> nodeToRemove = previous.next;
+            removedData = nodeToRemove.data;
+    
+            previous.next = nodeToRemove.next;
+        }
+
+        size--;
+        return removedData;
+
+    }
+
+    }
+
