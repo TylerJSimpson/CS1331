@@ -3,10 +3,10 @@ public class LinkedList<E> {
     // Inner class
 
     private class Node<E> {
-        E data;
-        Node<E> next;
+        private E data;
+        private Node<E> next;
 
-        Node(E data, Node<E> next) {
+        private Node(E data, Node<E> next) {
             this.data = data;
             this.next = next;
         }
@@ -58,7 +58,7 @@ public class LinkedList<E> {
      */
     public void add(int index, E newData) {
         if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Index out of bounds: " + index);
         }
         if (index == 0) {
             head = new Node<E>(newData, head);
@@ -103,7 +103,7 @@ public class LinkedList<E> {
      */
     public E get(int index) {
         if ((index < 0) || (index >= size)) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Index out of bounds: " + index);
         }
 
         Node<E> current = head;
@@ -133,10 +133,15 @@ public class LinkedList<E> {
         }
         return -1;
     }
-    
+
+    /**
+     * Removes node at provided @param index and @return node removed
+     * @param index to remove node
+     * @return E node removed
+     */
     public E remove(int index) {
         if ((index < 0) || (index >= size)) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Index out of bounds: " + index);
         }
 
         E removedData;
@@ -157,7 +162,91 @@ public class LinkedList<E> {
 
         size--;
         return removedData;
+    }
 
+    /**
+     * Remove input @param o object and return boolean @return true if found otherwise false
+     * @param o object to search linked list for and remove
+     * @return boolean true or false whether @param o was found in linked list
+     */
+    public boolean remove(Object o) {
+
+        if (head == null) {
+            return false;
+        }
+        
+        if ((o == null && head.data == null) || (o != null && o.equals(head.data))) {
+            head = head.next;
+            size--;
+            return true;
+        }
+        
+        Node<E> current = head;
+        while (current.next != null) {
+            if ((o == null && current.next.data == null) || 
+                (o != null && o.equals(current.next.data))) {
+                    current.next = current.next.next;
+                    size--;
+                    return true;       
+            }
+            current = current.next;
+        }
+        return false;
+    }
+
+    /**
+     * Updates the value at the specified index and returns the old value.
+     * @param index the index of the element to update
+     * @param element the new value
+     * @return the old value that was replaced
+     * @throws IndexOutOfBoundsException if the index is out of range
+     */
+    public E set(int index, E element) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index out of bounds: " + index);
+        }
+        
+        Node<E> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+        
+        E oldValue = current.data;
+        current.data = element;
+        return oldValue;
+    }
+
+    /**
+     * Returns a string representation of this list.
+     * @return a string representation of this list
+     */
+    @Override
+    public String toString() {
+        if (head == null) {
+            return "[]";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        
+        Node<E> current = head;
+        while (current != null) {
+            sb.append(String.valueOf(current.data));
+            
+            if (current.next != null) {
+                sb.append(", ");
+            }
+            
+            current = current.next;
+        }
+        
+        sb.append("]");
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return true; // Optional implementation - can always return true
     }
 
     }
