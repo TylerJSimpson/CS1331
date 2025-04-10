@@ -91,8 +91,56 @@ You will see `Pane` as a suffix this is because they are all subclasses of a cla
 
 ### Anonymous Inner Classes
 
+Notice `CustomEventHandler` is only mentioned once outside of where it is instantiated. 
+Single use classes are called **anonymous inner classes**.
+
+```java
+EventHandler<ActionEvent> handler = new EventHandler<>() {
+    public void handle(ActionEvent event) {
+        System.out.println("Hello World!");
+    }
+};
+btn.setOnAction(handler);
+```
+
+You can even make it more concise by removing the **handler** variables:
+
+```java
+btn.setOnAction(new EventHandler<ActionEvent>() {
+    public void handle(ActionEvent event) {
+        System.out.println("Hello World!");
+    }
+});
+```
+
+Despite being an interface you can instantiate, because we are providing the definition of the class that implements the interface right here it is legal.
+
 ### Lambda Expressions
+
+Now we have implemented a class without giving it a name. But for simple classes such as those based on interfaces with a single method, we can use **lambda** expressions to slim the code down even further.
+
+```java
+btn.setOnAction((ActionEvent event) -> {
+    System.out.println("Hello World!");
+    }
+);
+```
+
+You can even condense this to a single line:
+```java
+btn.setOnAction(event -> System.out.println("Hello World!"));
+```
 
 ### A More Advanced GUI Pt. 1
 
+Oracle resource on built in Layout Panes:
+
+https://docs.oracle.com/javase/8/javafx/layout-tutorial/builtin_layouts.htm
+
+A layout refers to a `Layout Container Class`. You can see BorderPane shows Top, Left, Center, Right, Bottom. `HBox` and `VBox` line up rows in single columns and rows. There is `GridPane` and many other layouts.
+
+There are also many UI controls such as `Text Field` and `Choice Box`.
+
 ### A More Advanced GUI Pt. 2
+
+See [TemperatureConverterGUI.java](/3_exceptions_data_structures_recursion_guis//module_10/programs/TemperatureConverterGUI.java)
